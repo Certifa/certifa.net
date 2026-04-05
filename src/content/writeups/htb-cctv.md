@@ -8,27 +8,6 @@ description: "Default creds → SQLi → motionEye RCE → root via Motion comma
 featured: false
 ---
 
-## Attack Path
-
-```mermaid
-flowchart TD
-    A([10.129.1.237]):::start --> B[Port 80: ZoneMinder v1.37.63\nadmin:admin default creds]
-    B --> C[CVE-2024-51482\nBoolean SQLi — tid parameter]:::key
-    C --> D[Dump zm.Users\nmark bcrypt hash → crack → SSH]
-    D --> E([mark — foothold]):::user
-    E --> F[motionEye on 127.0.0.1:8765\nMotion daemon on 127.0.0.1:7999]
-    F --> G[SSH local port forward\nAccess motionEye UI]:::pivot
-    G --> H[CVE-2025-60787\nImage File Name injection → RCE]:::key
-    H --> I[Motion on_picture_save\nexecutes /tmp/s.sh as root]:::pivot
-    I --> J([user.txt/root.txt]):::root
-
-    classDef start fill:#4A90D9,color:#fff
-    classDef user fill:#27AE60,color:#fff
-    classDef root fill:#E74C3C,color:#fff
-    classDef key fill:#8E44AD,color:#fff
-    classDef pivot fill:#E67E22,color:#fff
-```
-
 <div class="writeup-locked">
   <div class="locked-icon">&#x1F512;</div>
   <div class="locked-content">
@@ -38,9 +17,7 @@ flowchart TD
       here once the machine retires, in line with
       <a href="https://help.hackthebox.com/en/articles/5188925-streaming-writeups-walkthroughs-policy" target="_blank" rel="noopener">HTB's active machine policy</a>.
     </p>
-    <p class="locked-hint">
-      The attack path diagram above gives an overview of the chain without spoiling the specific exploitation steps.
-    </p>
+    <p class="locked-hint">Check back after the machine retires.</p>
   </div>
 </div>
 

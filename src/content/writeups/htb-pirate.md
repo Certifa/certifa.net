@@ -8,28 +8,6 @@ description: "Windows AD box chaining Pre-2K computer accounts, gMSA extraction,
 featured: true
 ---
 
-## Attack Path
-
-```mermaid
-graph TD
-    A["pentest creds"] --> B["Pre-2K · MS01$:ms01"]
-    B --> C["gMSA Hash Dump"]
-    C --> D["WinRM → DC01"]
-    D --> E["Ligolo-ng Tunnel"]
-    E --> F["Coerce + Relay → RBCD on WEB01"]
-    F --> G["S4U2Proxy · Admin → WEB01"]
-    G --> H["user.txt"]
-    G --> I["secretsdump · a.white creds"]
-    I --> J["SPN-Jack · HTTP/WEB01 → DC01"]
-    J --> K["root.txt"]
-
-    style A fill:#4a90d9,stroke:#2c5aa0,color:#fff
-    style H fill:#2ecc71,stroke:#27ae60,color:#fff
-    style K fill:#e74c3c,stroke:#c0392b,color:#fff
-    style F fill:#e67e22,stroke:#d35400,color:#fff
-    style J fill:#9b59b6,stroke:#8e44ad,color:#fff
-```
-
 <div class="writeup-locked">
   <div class="locked-icon">&#x1F512;</div>
   <div class="locked-content">
@@ -39,9 +17,7 @@ graph TD
       here once the machine retires, in line with
       <a href="https://help.hackthebox.com/en/articles/5188925-streaming-writeups-walkthroughs-policy" target="_blank" rel="noopener">HTB's active machine policy</a>.
     </p>
-    <p class="locked-hint">
-      The attack path diagram above gives an overview of the chain without spoiling the specific exploitation steps.
-    </p>
+    <p class="locked-hint">Check back after the machine retires.</p>
   </div>
 </div>
 
