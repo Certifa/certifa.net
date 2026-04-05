@@ -4,7 +4,7 @@ date: 2026-03-01
 tags: [windows, active-directory, pre2k, gmsa, kerberos, ntlm-relay, rbcd, constrained-delegation, spn-jacking, ligolo-ng, privesc]
 difficulty: hard
 platform: HTB
-description: "Windows AD box chaining Pre-2K computer accounts, gMSA extraction, NTLM relay to set RBCD, S4U2Proxy to WEB01, then SPN-jacking combined with constrained delegation and altservice to compromise DC01 as SYSTEM."
+description: "Active HackTheBox machine — full writeup published after retirement."
 featured: true
 ---
 

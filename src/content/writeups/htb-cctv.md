@@ -4,7 +4,7 @@ date: 2026-03-07
 tags: [linux, ZoneMinder, SQLi, CVE-2024-51482, CVE-2025-60787, SSH-tunneling, command-injection]
 difficulty: easy
 platform: HTB
-description: "Default creds → SQLi → motionEye RCE → root via Motion command injection"
+description: "Active HackTheBox machine — full writeup published after retirement."
 featured: false
 ---
 
