@@ -38,7 +38,7 @@ featured: false
   padding: 5rem 2rem;
   margin: 2rem 0;
   position: relative;
-  border: 1px solid rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.28);
   border-radius: 0.75rem;
   background: rgba(6, 6, 14, 0.6);
   overflow: hidden;
@@ -54,9 +54,9 @@ featured: false
   pointer-events: none;
 }
 .locked-svg {
-  width: 64px;
-  height: 64px;
-  margin-bottom: 1.5rem;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.75rem;
   filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.4));
   animation: lock-pulse 3s ease-in-out infinite;
 }
