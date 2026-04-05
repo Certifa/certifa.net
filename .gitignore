@@ -27,3 +27,6 @@ Thumbs.db
 
 # Private Claude session files
 .claude/
+
+# Draft writeups for active HTB machines (never publish)
+_drafts/
