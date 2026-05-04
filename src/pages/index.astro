@@ -697,16 +697,19 @@ const projects = [
   .hm-heatmap-head .h-title { font-size: 14px; font-weight: 500; color: var(--fg); letter-spacing: -0.01em; }
   .hm-heatmap-head .h-meta { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--fg-3); letter-spacing: 0.06em; }
   .hm-heatmap-grid { display: grid; grid-template-columns: repeat(26, 1fr); gap: 3px; flex: 1; }
-  .hm-heatmap-grid i {
+  /* :global() because cells are created in JS after render and don't carry
+     Astro's scoped data-astro-cid attribute, so scoped selectors miss them. */
+  .hm-heatmap-grid :global(i) {
     aspect-ratio: 1; border-radius: 2px;
     background: var(--bg-3);
     transition: transform .15s ease;
+    display: block;
   }
-  .hm-heatmap-grid i[data-l="1"] { background: color-mix(in srgb, var(--accent) 14%, var(--bg-3)); }
-  .hm-heatmap-grid i[data-l="2"] { background: color-mix(in srgb, var(--accent) 32%, var(--bg-3)); }
-  .hm-heatmap-grid i[data-l="3"] { background: color-mix(in srgb, var(--accent) 55%, var(--bg-3)); }
-  .hm-heatmap-grid i[data-l="4"] { background: var(--accent); }
-  .hm-heatmap-grid i:hover { transform: scale(1.4); z-index: 1; position: relative; }
+  .hm-heatmap-grid :global(i[data-l="1"]) { background: color-mix(in srgb, var(--accent) 14%, var(--bg-3)); }
+  .hm-heatmap-grid :global(i[data-l="2"]) { background: color-mix(in srgb, var(--accent) 32%, var(--bg-3)); }
+  .hm-heatmap-grid :global(i[data-l="3"]) { background: color-mix(in srgb, var(--accent) 55%, var(--bg-3)); }
+  .hm-heatmap-grid :global(i[data-l="4"]) { background: var(--accent); }
+  .hm-heatmap-grid :global(i):hover { transform: scale(1.4); z-index: 1; position: relative; }
   .hm-heatmap-foot {
     display: flex; justify-content: space-between; align-items: center;
     font-family: 'JetBrains Mono', monospace;
