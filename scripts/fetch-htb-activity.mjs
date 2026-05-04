@@ -70,19 +70,19 @@ function extractEvent(msg) {
   const blob = haystacks.join(' \n ').toLowerCase();
   if (!blob.includes(HTB_USER)) return null;
 
-  // Determine flag type. Both `root` and `user` count as separate events
-  // because they're separate flag captures, but we tag them so we can split
-  // the count later if we ever want to.
-  let flag = null;
-  if (/\broot\b/.test(blob)) flag = 'root';
-  else if (/\buser\b/.test(blob)) flag = 'user';
-  if (!flag) return null;
+  // Count every bot-message that mentions the user as one event. This catches
+  // user/root flags, achievements, rank-ups, fortress/prolab/sherlock events
+  // — anything HTB Updates posts for you.
+  let kind = 'other';
+  if (/\broot\b/.test(blob))         kind = 'root';
+  else if (/\buser\b/.test(blob))    kind = 'user';
+  else if (/\bachievement\b/.test(blob)) kind = 'achievement';
+  else if (/\brank\b/.test(blob))    kind = 'rank';
 
-  // Try to extract machine name after "on <Name>".
   const m = / on ([A-Za-z0-9][A-Za-z0-9 _.-]{0,40})/.exec(blob);
   const machine = m?.[1]?.trim() ?? null;
 
-  return { flag, machine, ts: msg.timestamp };
+  return { kind, machine, ts: msg.timestamp };
 }
 
 function isoDay(d) { return d.toISOString().slice(0, 10); }
