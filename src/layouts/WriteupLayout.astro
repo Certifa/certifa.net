@@ -2,7 +2,6 @@
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
-import TableOfContents from '../components/TableOfContents.astro';
 
 interface Props {
   entry: CollectionEntry<'writeups'>;
@@ -13,88 +12,60 @@ interface Props {
 const { entry, headings, readingTime } = Astro.props;
 const { title, date, tags, difficulty, platform, description } = entry.data;
 
-const formattedDate = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
+const fmt = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric',
 }).format(date);
 
-const difficultyClass: Record<string, string> = {
-  easy: 'badge-easy',
-  medium: 'badge-medium',
-  hard: 'badge-hard',
-  insane: 'badge-insane',
-};
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 <BaseLayout title={title} description={description} isWriteup={true}>
-  <div class="pt-20 min-h-screen">
-    <div class="max-w-6xl mx-auto px-6 py-10">
-
-      <!-- Back link -->
-      <a href="/writeups" class="inline-flex items-center gap-2 font-mono text-xs text-[#555a6e] hover:text-[#00e5ff] transition-colors mb-8 group">
-        <span class="group-hover:-translate-x-1 transition-transform">←</span>
+  <article class="wu-page">
+    <div class="wrap">
+      <a class="wu-back" href="/writeups/">
+        <span class="ar">←</span>
         back to writeups
       </a>
 
-      <!-- Header -->
-      <header class="mb-10 pb-8 border-b border-[rgba(255,255,255,0.06)]">
-        <div class="flex flex-wrap items-center gap-3 mb-4">
-          <span class={`badge ${difficultyClass[difficulty]}`}>{difficulty}</span>
-          <span class="badge" style="background:rgba(0,229,255,0.08);color:#00e5ff;border:1px solid rgba(0,229,255,0.25);">{platform}</span>
-          <span class="font-mono text-xs text-[#555a6e]">{formattedDate}</span>
-          <span class="font-mono text-xs text-[#555a6e]">~{readingTime} min read</span>
+      <header class="wu-head">
+        <div class="wu-head-meta">
+          <span class={`diff-pill diff-${difficulty}`}>{difficulty}</span>
+          <span class="wu-plat">{platform}</span>
+          <span class="wu-dot">·</span>
+          <span class="wu-date">{fmt}</span>
+          <span class="wu-dot">·</span>
+          <span class="wu-read">~{readingTime} min read</span>
         </div>
-
-        <h1 class="text-3xl md:text-4xl font-bold text-[#eaedf3] font-sans mb-3 leading-tight">
-          {title}
-        </h1>
-
-        <p class="text-[#c8cad0] text-base leading-relaxed max-w-xl mb-4">{description}</p>
-
-        <div class="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <a href={`/writeups?tag=${tag}`} class="tag">#{tag}</a>
-          ))}
+        <h1 class="wu-title">{title}</h1>
+        <p class="wu-desc">{description}</p>
+        <div class="wu-tags">
+          {tags.map((t) => <span class="tag">{t}</span>)}
         </div>
       </header>
 
-      <!-- Content area: prose + TOC sidebar -->
-      <div class="flex gap-12 items-start">
-        <!-- Main prose -->
-        <article class="prose-writeup flex-1 min-w-0">
+      <div class="wu-grid">
+        <div class="prose-writeup">
           <slot />
-        </article>
+        </div>
 
-        <!-- TOC sidebar (desktop) -->
-        {headings.length > 0 && (
-          <aside class="hidden lg:block w-56 flex-shrink-0 sticky top-24 self-start">
-            <TableOfContents headings={headings} />
+        {tocHeadings.length > 0 && (
+          <aside class="wu-toc-wrap">
+            <div class="wu-toc">
+              <div class="wu-toc-title">On this page</div>
+              <nav class="wu-toc-list">
+                {tocHeadings.map((h) => (
+                  <a href={`#${h.slug}`} class={`toc-link depth-${h.depth}`}>{h.text}</a>
+                ))}
+              </nav>
+            </div>
           </aside>
         )}
       </div>
 
-      <!-- Mobile TOC (above content) -->
-      {headings.length > 0 && (
-        <div class="lg:hidden mb-8 p-4 rounded-lg border border-[rgba(255,255,255,0.06)] bg-[rgba(14,14,28,0.5)]">
-          <button
-            id="toc-toggle"
-            class="font-mono text-xs text-[#555a6e] hover:text-[#00e5ff] transition-colors flex items-center gap-2 w-full"
-          >
-            <span class="text-[#00e5ff]">▸</span>
-            Table of Contents
-          </button>
-          <div id="toc-mobile" class="hidden mt-3">
-            <TableOfContents headings={headings} />
-          </div>
-        </div>
-      )}
-
-      <!-- Prev / Next nav placeholder -->
-      <nav class="mt-16 pt-8 border-t border-[rgba(255,255,255,0.06)] flex justify-between">
-        <a href="/writeups" class="btn btn-ghost text-sm">← All Writeups</a>
+      <nav class="wu-foot">
+        <a class="btn ghost" href="/writeups/">← All writeups</a>
       </nav>
     </div>
-  </div>
+  </article>
 
   <!-- Mermaid: render diagram code blocks client-side -->
   <script type="module" is:inline>
@@ -104,20 +75,19 @@ const difficultyClass: Record<string, string> = {
       theme: 'base',
       themeVariables: {
         darkMode: true,
-        background: '#06060e',
-        primaryColor: '#0e0e1c',
-        primaryTextColor: '#c8cad0',
-        primaryBorderColor: 'rgba(0,229,255,0.3)',
-        lineColor: '#00e5ff',
-        secondaryColor: '#130a1f',
-        tertiaryColor: '#0a0a1a',
-        edgeLabelBackground: '#06060e',
-        nodeTextColor: '#eaedf3',
-        clusterBkg: '#0e0e1c',
-        titleColor: '#eaedf3',
+        background: '#0a0a0a',
+        primaryColor: '#161616',
+        primaryTextColor: '#ededed',
+        primaryBorderColor: 'rgba(170, 240, 200, 0.35)',
+        lineColor: 'rgba(170, 240, 200, 0.85)',
+        secondaryColor: '#111111',
+        tertiaryColor: '#1f1f1f',
+        edgeLabelBackground: '#0a0a0a',
+        nodeTextColor: '#ededed',
+        clusterBkg: '#111111',
+        titleColor: '#ededed',
       },
     });
-
     const diagrams = document.querySelectorAll('pre[data-language="mermaid"]');
     for (const pre of diagrams) {
       const code = pre.querySelector('code');
@@ -129,32 +99,22 @@ const difficultyClass: Record<string, string> = {
         wrapper.className = 'mermaid-diagram';
         wrapper.innerHTML = svg;
         pre.replaceWith(wrapper);
-      } catch (e) {
-        // leave as code block if render fails
-      }
+      } catch (e) {}
     }
   </script>
 
   <script>
-    // Mobile TOC toggle
-    const tocToggle = document.getElementById('toc-toggle');
-    const tocMobile = document.getElementById('toc-mobile');
-    tocToggle?.addEventListener('click', () => {
-      tocMobile?.classList.toggle('hidden');
-      const icon = tocToggle.querySelector('span');
-      if (icon) icon.textContent = tocMobile?.classList.contains('hidden') ? '▸' : '▾';
-    });
-
     // Copy buttons on code blocks
     document.querySelectorAll('.prose-writeup pre').forEach((pre) => {
       const btn = document.createElement('button');
       btn.className = 'copy-btn';
+      btn.type = 'button';
       btn.textContent = 'copy';
       btn.addEventListener('click', () => {
         const code = pre.querySelector('code');
         navigator.clipboard.writeText(code?.textContent ?? '').then(() => {
-          btn.textContent = 'copied!';
-          setTimeout(() => (btn.textContent = 'copy'), 2000);
+          btn.textContent = 'copied';
+          setTimeout(() => (btn.textContent = 'copy'), 1600);
         });
       });
       (pre as HTMLElement).style.position = 'relative';
@@ -162,40 +122,125 @@ const difficultyClass: Record<string, string> = {
     });
 
     // Active TOC heading via IntersectionObserver
-    const headingEls = document.querySelectorAll('.prose-writeup h2, .prose-writeup h3');
-    const tocLinks = document.querySelectorAll('.toc-link');
-
-    if (tocLinks.length > 0) {
-      const headingObserver = new IntersectionObserver(
+    const headings = document.querySelectorAll<HTMLElement>('.prose-writeup h2, .prose-writeup h3');
+    const links = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    if (links.length > 0) {
+      const obs = new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const id = entry.target.id;
-              tocLinks.forEach((link) => {
-                link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              const id = (e.target as HTMLElement).id;
+              links.forEach((l) => {
+                l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
               });
             }
           });
         },
         { rootMargin: '-15% 0% -70% 0%', threshold: 0 }
       );
-
-      headingEls.forEach((h) => headingObserver.observe(h));
+      headings.forEach((h) => obs.observe(h));
     }
   </script>
+</BaseLayout>
+
 <style>
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .wrap { padding: 0 20px; } }
+
+  .wu-page { padding: 100px 0 120px; }
+  @media (max-width: 768px) { .wu-page { padding: 88px 0 64px; } }
+
+  .wu-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--fg-3);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    margin-bottom: 40px;
+    transition: color .15s ease;
+  }
+  .wu-back:hover { color: var(--accent); }
+  .wu-back .ar { transition: transform .18s ease; }
+  .wu-back:hover .ar { transform: translateX(-3px); }
+
+  .wu-head {
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wu-head-meta {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--fg-3);
+  }
+  .wu-plat { color: var(--fg-2); letter-spacing: 0.06em; }
+  .wu-dot  { color: var(--fg-4); }
+  .wu-date { color: var(--fg-3); }
+  .wu-read { color: var(--fg-3); }
+
+  .wu-title {
+    font-family: 'Geist', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    color: var(--fg);
+    margin-bottom: 18px;
+  }
+  .wu-desc {
+    font-size: 18px; color: var(--fg-2);
+    max-width: 720px; line-height: 1.55;
+    margin-bottom: 20px;
+  }
+  .wu-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .wu-grid {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 64px;
+    align-items: start;
+  }
+  @media (max-width: 1000px) {
+    .wu-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+
+  .wu-toc-wrap { position: sticky; top: 100px; align-self: start; }
+  @media (max-width: 1000px) {
+    .wu-toc-wrap { position: static; order: -1; margin-bottom: 12px; }
+  }
+  .wu-toc {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 18px 16px;
+  }
+  .wu-toc-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .wu-toc-list { display: flex; flex-direction: column; gap: 2px; }
+
+  .wu-foot {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+  }
+
   .mermaid-diagram {
-    background: rgba(14, 14, 28, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 0.5rem;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
     padding: 1.5rem;
     margin: 1.5rem 0;
     overflow-x: auto;
     text-align: center;
   }
-  .mermaid-diagram svg {
-    max-width: 100%;
-    height: auto;
-  }
+  .mermaid-diagram svg { max-width: 100%; height: auto; }
 </style>
-</BaseLayout>

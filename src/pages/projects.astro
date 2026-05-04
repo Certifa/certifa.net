@@ -1,124 +1,213 @@
 ---
-import PageLayout from '../layouts/PageLayout.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
-const projects = [
+type Status = 'active' | 'completed' | 'ongoing';
+
+interface Project {
+  name: string;
+  status: Status;
+  desc: string;
+  tags: string[];
+  link?: string;
+  label?: string;
+  featured?: boolean;
+}
+
+const projects: Project[] = [
   {
-    title: 'HackTheBox Profile',
-    description: '45+ machines completed across Easy → Insane difficulty. Active rank in competitive hacking. Windows, Linux, web exploitation, and Active Directory environments.',
-    tags: ['HTB', 'Pentesting', 'Active Directory', 'Linux'],
-    link: 'https://app.hackthebox.com/profile/444744',
-    linkLabel: 'View Profile ↗',
-    icon: '⬡',
+    name: 'HackTheBox Profile',
     featured: true,
     status: 'active',
+    desc: '50+ machines across Easy → Insane. Master rank, peak Pro Hacker. The main proving ground for Active Directory, Linux/Windows privesc, and web exploitation.',
+    tags: ['HTB', 'Pentesting', 'Active Directory'],
+    link: 'https://app.hackthebox.com/users/444744',
+    label: 'View profile',
   },
   {
-    title: 'HTB Tracker',
-    description: 'Personal HackTheBox machine tracker built as a web app. Tracks completed boxes, difficulty breakdown, platforms, and progress stats. Deployed on GitHub Pages.',
-    tags: ['JavaScript', 'HTB', 'Dashboard', 'GitHub Pages'],
+    name: 'HTB Tracker',
+    featured: true,
+    status: 'active',
+    desc: 'Personal web dashboard tracking completed HTB machines — difficulty breakdown, platform stats, progress telemetry. Vanilla JS + GitHub Pages.',
+    tags: ['JavaScript', 'Dashboard', 'GitHub Pages'],
     link: 'https://certifa.github.io/htb-tracker/',
-    linkLabel: 'Open Tracker ↗',
-    icon: '📊',
-    featured: true,
-    status: 'active',
+    label: 'Open tracker',
   },
   {
-    title: 'Fortress Jet.com',
-    description: 'Completed the HTB Fortress Jet.com — a multi-stage enterprise simulation requiring web exploitation, lateral movement across multiple hosts, and a full privilege escalation chain.',
-    tags: ['HTB Fortress', 'Web', 'Pivoting', 'Privesc', 'Insane'],
-    link: undefined,
-    icon: '🏰',
-    featured: true,
-    status: 'completed',
-  },
-  {
-    title: 'Active Directory Home Lab',
-    description: 'Windows Server 2022 domain controller with 2 workstations. Practice environment for Kerberos attacks, BloodHound enumeration, NTLM relay, and AD misconfigurations.',
-    tags: ['Active Directory', 'Windows Server', 'BloodHound', 'VMware'],
-    link: undefined,
-    icon: '🏛️',
+    name: 'AD Home Lab',
     featured: false,
     status: 'ongoing',
+    desc: 'Windows Server 2022 DC + two workstations. A practice environment for Kerberos abuse, BloodHound enumeration, NTLM relay, and AD misconfig chains.',
+    tags: ['Hyper-V', 'Server 2022', 'AD DS'],
   },
   {
-    title: 'HTB Recon Automation',
-    description: 'Python scripts for automating initial HTB recon: auto-nmap, service fingerprinting output parsing, gobuster wordlist selection, and results aggregation into a report template.',
-    tags: ['Python', 'Automation', 'nmap', 'Reconnaissance'],
+    name: 'HTB Recon Automation',
+    featured: false,
+    status: 'active',
+    desc: 'Python orchestrator: nmap fingerprinting → parsed services → ffuf/gobuster with tuned wordlists → single report template. Saves an hour on every box.',
+    tags: ['Python', 'nmap', 'ffuf'],
     link: 'https://github.com/Certifa',
-    linkLabel: 'GitHub ↗',
-    icon: '🐍',
+    label: 'GitHub',
+  },
+  {
+    name: 'This Portfolio',
     featured: false,
     status: 'active',
-  },
-  {
-    title: 'CCNA Study Lab',
-    description: 'Cisco Packet Tracer and GNS3 labs for CCNA prep. Subnetting practice, OSPF/EIGRP routing, VLANs, and ACLs. Documenting configs alongside HU coursework.',
-    tags: ['CCNA', 'Cisco', 'Networking', 'Routing'],
-    link: undefined,
-    icon: '🌐',
-    featured: false,
-    status: 'ongoing',
-  },
-  {
-    title: 'This Portfolio',
-    description: 'Built with Astro + Tailwind CSS. Dark cyber aesthetic with Three.js particle hero, Astro content collections for writeups, and GitHub Actions CI/CD to Pages.',
-    tags: ['Astro', 'Tailwind', 'Three.js', 'GitHub Actions'],
+    desc: 'Built with Astro + Tailwind CSS. Mint editorial palette, content collections for writeups, GitHub Actions CI to Pages.',
+    tags: ['Astro', 'Tailwind', 'GitHub Actions'],
     link: 'https://github.com/Certifa/certifa.github.io',
-    linkLabel: 'Source ↗',
-    icon: '💻',
-    featured: false,
-    status: 'active',
+    label: 'Source',
   },
 ];
 
 const featured = projects.filter((p) => p.featured);
 const rest = projects.filter((p) => !p.featured);
 ---
-<PageLayout
-  title="Projects"
-  label="projects"
-  description="HTB machines, home labs, Python tools, and coursework projects."
-  subtitle="Things I've built, broken, and documented."
->
-  <div class="px-6 pb-20 max-w-6xl mx-auto">
-
-    <!-- Featured -->
-    <section class="py-10 border-b border-[rgba(255,255,255,0.05)]">
-      <div class="section-label reveal mb-6">featured</div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {featured.map((project, i) => (
-          <div class="reveal" style={`transition-delay: ${i * 80}ms`}>
-            <ProjectCard {...project} />
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- All projects -->
-    <section class="py-10">
-      <div class="section-label reveal mb-6">all-projects</div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {rest.map((project, i) => (
-          <div class="reveal" style={`transition-delay: ${i * 60}ms`}>
-            <ProjectCard {...project} />
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <div class="text-center py-10 reveal">
-      <p class="font-mono text-xs text-[#555a6e] mb-4">More on GitHub →</p>
-      <a
-        href="https://github.com/Certifa"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="btn btn-outline"
-      >
-        github.com/Certifa ↗
-      </a>
+<BaseLayout title="Projects" description="Labs, tooling, and dashboards by Certifa.">
+  <section class="page-head">
+    <div class="wrap">
+      <div class="page-kicker" data-reveal>/ projects</div>
+      <h1 class="page-title" data-reveal data-reveal-delay="1">Things built <span class="italic">on purpose.</span></h1>
+      <p class="page-sub" data-reveal data-reveal-delay="2">Labs, tooling, and the occasional dashboard. Half of it exists so I can practice on my own terms.</p>
     </div>
+  </section>
 
-  </div>
-</PageLayout>
+  <section class="proj-wrap">
+    <div class="wrap">
+      <div class="proj-featured">
+        {featured.map((p, i) => (
+          <article class="proj-row" data-reveal>
+            <span class="p-num">{String(i + 1).padStart(2, '0')} / featured</span>
+            <div>
+              <div class="proj-head">
+                <h3 class="proj-name">{p.name}</h3>
+                <span class={`status-pill st-${p.status}`}>{p.status}</span>
+              </div>
+              <p class="proj-desc">{p.desc}</p>
+            </div>
+            <div class="proj-right">
+              <div class="proj-tags">
+                {p.tags.map((t) => <span class="tag">{t}</span>)}
+              </div>
+              {p.link && (
+                <a class="proj-link" href={p.link} target="_blank" rel="noopener">
+                  {p.label || 'View'} <span class="arrow">↗</span>
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="proj-grid">
+        {rest.map((p) => (
+          <article class="proj-card" data-reveal>
+            <div class="pc-head">
+              <h3 class="pc-name">{p.name}</h3>
+              <span class={`status-pill st-${p.status}`}>{p.status}</span>
+            </div>
+            <p class="pc-desc">{p.desc}</p>
+            <div class="pc-tags">
+              {p.tags.map((t) => <span class="tag">{t}</span>)}
+            </div>
+            {p.link && (
+              <a class="proj-link small" href={p.link} target="_blank" rel="noopener">
+                {p.label || 'View'} <span class="arrow">↗</span>
+              </a>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .wrap { padding: 0 20px; } }
+
+  .proj-wrap { padding: 72px 0 120px; }
+  .proj-featured {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  .proj-row {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    position: relative;
+    transition: border-color .22s ease, background .22s ease;
+  }
+  .proj-row:hover { border-color: var(--line-2); background: var(--bg-3); }
+  @media (max-width: 900px) {
+    .proj-row { grid-template-columns: 1fr; padding: 28px 24px; gap: 24px; }
+  }
+  .p-num {
+    position: absolute; top: 22px; right: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--fg-3);
+    letter-spacing: 0.1em;
+  }
+  .proj-head {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .proj-name {
+    font-family: 'Geist', sans-serif;
+    font-size: 36px; font-weight: 500;
+    letter-spacing: -0.03em; line-height: 1;
+    color: var(--fg);
+  }
+  .proj-desc {
+    color: var(--fg-2); font-size: 15px;
+    line-height: 1.65; max-width: 540px;
+  }
+  .proj-right {
+    display: flex; flex-direction: column; gap: 20px;
+    justify-content: space-between;
+  }
+  .proj-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .proj-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--fg);
+    text-decoration: none; font-weight: 500;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line-2);
+    align-self: flex-start;
+    transition: border-color .2s ease, color .2s ease;
+  }
+  .proj-link.small { font-size: 13px; margin-top: 6px; }
+  .proj-link:hover { border-color: var(--accent); color: var(--accent); }
+  .proj-link .arrow { transition: transform .2s ease; }
+  .proj-link:hover .arrow { transform: translate(3px, -3px); }
+
+  .proj-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  @media (max-width: 1000px) { .proj-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px)  { .proj-grid { grid-template-columns: 1fr; } }
+
+  .proj-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 28px 24px;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .proj-card:hover { border-color: var(--line-2); background: var(--bg-3); transform: translateY(-2px); }
+  .pc-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .pc-name {
+    font-family: 'Geist', sans-serif;
+    font-size: 20px; font-weight: 500;
+    letter-spacing: -0.015em; color: var(--fg);
+  }
+  .pc-desc { color: var(--fg-2); font-size: 13.5px; line-height: 1.6; }
+  .pc-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+</style>

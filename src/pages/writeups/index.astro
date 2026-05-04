@@ -1,186 +1,166 @@
 ---
 import { getCollection } from 'astro:content';
-import PageLayout from '../../layouts/PageLayout.astro';
-import WriteupCard from '../../components/WriteupCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const allWriteups = await getCollection('writeups');
-const sorted = allWriteups.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const all = await getCollection('writeups');
+const sorted = all.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const platforms = [...new Set(sorted.map((w) => w.data.platform))];
-const difficulties = ['easy', 'medium', 'hard', 'insane'];
-const allTags = [...new Set(sorted.flatMap((w) => w.data.tags))].sort();
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(d);
+
+const counts = {
+  all:      sorted.length,
+  easy:     sorted.filter(w => w.data.difficulty === 'easy').length,
+  medium:   sorted.filter(w => w.data.difficulty === 'medium').length,
+  hard:     sorted.filter(w => w.data.difficulty === 'hard').length,
+  insane:   sorted.filter(w => w.data.difficulty === 'insane').length,
+  featured: sorted.filter(w => w.data.featured).length,
+};
 ---
-<PageLayout
-  title="Writeups"
-  label="writeups"
-  description="HTB, THM, and CTF writeups — pentesting methodology, step-by-step breakdowns, and lessons learned."
-  subtitle={`${sorted.length} writeup${sorted.length !== 1 ? 's' : ''} · HTB, THM, CTF`}
->
-  <div class="px-6 pb-20 max-w-6xl mx-auto">
+<BaseLayout title="Writeups" description="HackTheBox writeups by Certifa — retired machines explained start to finish.">
+  <section class="page-head">
+    <div class="wrap">
+      <div class="page-kicker" data-reveal>/ writeups</div>
+      <h1 class="page-title" data-reveal data-reveal-delay="1">Notes, after <span class="italic">the flag.</span></h1>
+      <p class="page-sub" data-reveal data-reveal-delay="2">Retired HackTheBox machines, explained start to finish. Foothold, pivot, privesc — no shortcuts in the narration.</p>
+    </div>
+  </section>
 
-    <!-- Filters -->
-    <div class="py-6 border-b border-[rgba(255,255,255,0.05)] mb-8 space-y-4">
-
-      <!-- Search -->
-      <div class="relative max-w-sm">
-        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-[#555a6e]">$</span>
-        <input
-          id="search"
-          type="search"
-          placeholder="search writeups..."
-          class="w-full bg-[rgba(14,14,28,0.6)] border border-[rgba(255,255,255,0.08)] rounded-md
-            font-mono text-sm text-[#c8cad0] placeholder-[#555a6e]
-            pl-7 pr-4 py-2.5
-            focus:outline-none focus:border-[rgba(0,229,255,0.4)] focus:ring-0
-            transition-colors"
-        />
+  <section class="wu-list">
+    <div class="wrap">
+      <div class="wu-controls" data-reveal>
+        <button class="chip active" data-filter="all">All · {counts.all}</button>
+        {counts.easy   > 0 && <button class="chip" data-filter="easy">Easy · {counts.easy}</button>}
+        {counts.medium > 0 && <button class="chip" data-filter="medium">Medium · {counts.medium}</button>}
+        {counts.hard   > 0 && <button class="chip" data-filter="hard">Hard · {counts.hard}</button>}
+        {counts.insane > 0 && <button class="chip" data-filter="insane">Insane · {counts.insane}</button>}
+        {counts.featured > 0 && <button class="chip" data-filter="featured">Featured · {counts.featured}</button>}
       </div>
 
-      <!-- Filter chips -->
-      <div class="flex flex-wrap gap-2 items-center">
-        <span class="font-mono text-[0.6rem] text-[#555a6e] tracking-widest uppercase mr-1">platform:</span>
-        <button class="filter-btn active font-mono text-xs px-3 py-1 rounded border transition-colors" data-filter="platform" data-value="all">
-          all
-        </button>
-        {platforms.map((p) => (
-          <button class="filter-btn font-mono text-xs px-3 py-1 rounded border transition-colors" data-filter="platform" data-value={p}>
-            {p}
-          </button>
-        ))}
-      </div>
-
-      <div class="flex flex-wrap gap-2 items-center">
-        <span class="font-mono text-[0.6rem] text-[#555a6e] tracking-widest uppercase mr-1">difficulty:</span>
-        <button class="filter-btn active font-mono text-xs px-3 py-1 rounded border transition-colors" data-filter="difficulty" data-value="all">
-          all
-        </button>
-        {difficulties.map((d) => (
-          <button class="filter-btn font-mono text-xs px-3 py-1 rounded border transition-colors" data-filter="difficulty" data-value={d}>
-            {d}
-          </button>
+      <div class="wu-items" id="wuItems">
+        {sorted.map((w, i) => (
+          <a
+            class="wu-row"
+            href={`/writeups/${w.slug}/`}
+            data-difficulty={w.data.difficulty}
+            data-featured={w.data.featured ? 'true' : 'false'}
+          >
+            <div class="wu-num">{String(i + 1).padStart(2, '0')}</div>
+            <div class="wu-main">
+              <div class="wu-header-row">
+                <span class="wu-name">{w.data.title}</span>
+                <span class={`diff-pill diff-${w.data.difficulty}`}>{w.data.difficulty}</span>
+                {w.data.featured && <span class="feat-pill">featured</span>}
+              </div>
+              <div class="wu-desc">{w.data.description}</div>
+              <div class="wu-tags">
+                {w.data.tags.map((t) => <span class="tag">{t}</span>)}
+              </div>
+            </div>
+            <div class="wu-meta">
+              <div class="wu-date">{fmt(w.data.date)}</div>
+              <div class="wu-plat">{w.data.platform}</div>
+            </div>
+          </a>
         ))}
       </div>
     </div>
-
-    <!-- Results count -->
-    <div class="font-mono text-xs text-[#555a6e] mb-5" id="results-count">
-      {sorted.length} writeup{sorted.length !== 1 ? 's' : ''}
-    </div>
-
-    <!-- Grid -->
-    <div id="writeups-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {sorted.map((entry) => (
-        <div
-          class="writeup-item reveal"
-          data-platform={entry.data.platform}
-          data-difficulty={entry.data.difficulty}
-          data-tags={entry.data.tags.join(',')}
-          data-title={entry.data.title.toLowerCase()}
-          data-desc={entry.data.description.toLowerCase()}
-        >
-          <WriteupCard entry={entry} />
-        </div>
-      ))}
-    </div>
-
-    <!-- Empty state -->
-    <div id="empty-state" class="hidden text-center py-20">
-      <div class="font-mono text-4xl mb-4 opacity-20">∅</div>
-      <p class="font-mono text-sm text-[#555a6e]">No writeups match the current filters.</p>
-      <button id="reset-filters" class="btn btn-ghost text-xs mt-4">Reset filters</button>
-    </div>
-
-  </div>
-</PageLayout>
+  </section>
+</BaseLayout>
 
 <style>
-  .filter-btn {
-    background: rgba(255,255,255,0.02);
-    border-color: rgba(255,255,255,0.08);
-    color: #555a6e;
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .wrap { padding: 0 20px; } }
+
+  .wu-list { padding: 72px 0 120px; }
+  .wu-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+
+  .wu-items { border-top: 1px solid var(--line); }
+  .wu-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none; color: inherit;
+    transition: padding .2s ease, background .2s ease;
+    cursor: pointer;
+    position: relative;
   }
-  .filter-btn:hover {
-    border-color: rgba(0,229,255,0.3);
-    color: #c8cad0;
+  .wu-row::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px; background: var(--accent);
+    transform: scaleY(0); transform-origin: center;
+    transition: transform .22s ease;
   }
-  .filter-btn.active {
-    background: rgba(0,229,255,0.08);
-    border-color: rgba(0,229,255,0.35);
-    color: #00e5ff;
+  .wu-row:hover::before { transform: scaleY(1); }
+  .wu-row:hover { padding-left: 16px; padding-right: 16px; background: var(--bg-2); }
+  @media (max-width: 700px) {
+    .wu-row { grid-template-columns: 1fr; gap: 12px; padding: 24px 0; }
+  }
+  .wu-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--fg-3);
+    padding-top: 6px;
+  }
+  .wu-main { min-width: 0; }
+  .wu-header-row {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .wu-name {
+    font-family: 'Geist', sans-serif;
+    font-size: 28px; font-weight: 500;
+    letter-spacing: -0.025em; line-height: 1;
+    color: var(--fg);
+  }
+  .wu-desc {
+    color: var(--fg-2);
+    font-size: 15px; line-height: 1.55;
+    max-width: 640px;
+    margin-bottom: 12px;
+  }
+  .wu-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .wu-meta {
+    text-align: right;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 10px;
+    padding-top: 6px;
+  }
+  @media (max-width: 700px) { .wu-meta { text-align: left; align-items: flex-start; } }
+  .wu-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--fg-3);
+  }
+  .wu-plat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--fg-2);
+    letter-spacing: 0.06em;
   }
 </style>
 
 <script>
-  const searchEl = document.getElementById('search') as HTMLInputElement | null;
-  const items = document.querySelectorAll<HTMLElement>('.writeup-item');
-  const resultsCount = document.getElementById('results-count');
-  const emptyState = document.getElementById('empty-state');
-  const grid = document.getElementById('writeups-grid');
-
-  const state = { platform: 'all', difficulty: 'all', query: '' };
-
-  function applyFilters() {
-    let visible = 0;
-
-    items.forEach((item) => {
-      const platform   = item.dataset.platform ?? '';
-      const difficulty = item.dataset.difficulty ?? '';
-      const title      = item.dataset.title ?? '';
-      const desc       = item.dataset.desc ?? '';
-      const tags       = item.dataset.tags ?? '';
-
-      const matchPlatform   = state.platform   === 'all' || platform   === state.platform;
-      const matchDifficulty = state.difficulty === 'all' || difficulty === state.difficulty;
-      const matchSearch     = !state.query ||
-        title.includes(state.query) ||
-        desc.includes(state.query) ||
-        tags.includes(state.query);
-
-      const show = matchPlatform && matchDifficulty && matchSearch;
-      item.style.display = show ? '' : 'none';
-      if (show) visible++;
-    });
-
-    if (resultsCount) {
-      resultsCount.textContent = `${visible} writeup${visible !== 1 ? 's' : ''}`;
-    }
-
-    const isEmpty = visible === 0;
-    emptyState?.classList.toggle('hidden', !isEmpty);
-    grid?.classList.toggle('hidden', isEmpty);
-  }
-
-  // Filter buttons
-  document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const filterType = btn.dataset.filter as 'platform' | 'difficulty';
-      const value = btn.dataset.value ?? 'all';
-
-      // Update active state within the same filter group
-      document.querySelectorAll<HTMLButtonElement>(`.filter-btn[data-filter="${filterType}"]`).forEach((b) => {
-        b.classList.toggle('active', b.dataset.value === value);
+  document.querySelectorAll<HTMLButtonElement>('.chip').forEach((c) => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach((x) => x.classList.remove('active'));
+      c.classList.add('active');
+      const filter = c.getAttribute('data-filter');
+      document.querySelectorAll<HTMLElement>('.wu-row').forEach((row) => {
+        const diff = row.getAttribute('data-difficulty');
+        const feat = row.getAttribute('data-featured') === 'true';
+        let show = false;
+        if (filter === 'all')           show = true;
+        else if (filter === 'featured') show = feat;
+        else                            show = diff === filter;
+        row.style.display = show ? '' : 'none';
       });
-
-      state[filterType] = value;
-      applyFilters();
+      let n = 1;
+      document.querySelectorAll<HTMLElement>('.wu-row').forEach((row) => {
+        if (row.style.display === 'none') return;
+        const num = row.querySelector('.wu-num');
+        if (num) num.textContent = String(n++).padStart(2, '0');
+      });
     });
-  });
-
-  // Search
-  searchEl?.addEventListener('input', () => {
-    state.query = searchEl.value.toLowerCase().trim();
-    applyFilters();
-  });
-
-  // Reset
-  document.getElementById('reset-filters')?.addEventListener('click', () => {
-    state.platform   = 'all';
-    state.difficulty = 'all';
-    state.query      = '';
-    if (searchEl) searchEl.value = '';
-    document.querySelectorAll<HTMLButtonElement>('.filter-btn').forEach((b) => {
-      b.classList.toggle('active', b.dataset.value === 'all');
-    });
-    applyFilters();
   });
 </script>
