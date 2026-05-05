@@ -1,3 +1,0 @@
-# [Section Name]
-
-Coming soon...
