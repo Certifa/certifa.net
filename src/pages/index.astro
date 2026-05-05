@@ -220,7 +220,7 @@ const projects = [
           <h3 class="hm-contact-title">Working on something <span class="it">interesting?</span></h3>
           <p class="hm-contact-sub">CTF teams, internships, lab trades, or just a good Kerberos war story — I'm easy to find. Pick a channel.</p>
           <div class="hm-contact-channels">
-            <a href="mailto:certifa.sec@proton.me"><span class="ic">✉</span>certifa.sec@proton.me</a>
+            <a href="mailto:mike@certifa.net"><span class="ic">✉</span>mike@certifa.net</a>
             <a href="https://github.com/Certifa" target="_blank" rel="noopener"><span class="ic">↗</span>github/Certifa</a>
             <a href="https://app.hackthebox.com/users/444744" target="_blank" rel="noopener"><span class="ic">⬢</span>hackthebox</a>
             <a href="https://www.linkedin.com/in/mike-bliek-3b319a161/" target="_blank" rel="noopener"><span class="ic">in</span>linkedin</a>
@@ -892,9 +892,9 @@ const projects = [
       btn!.disabled = true;
       hint!.textContent = '↳ thanks — i\'ll write back';
       hint!.style.color = 'var(--accent)';
-      const subject = encodeURIComponent('hello from certifa.github.io');
+      const subject = encodeURIComponent('hello from certifa.net');
       const body    = encodeURIComponent((msg!.value || '') + '\n\n— ' + v);
-      window.location.href = 'mailto:certifa.sec@proton.me?subject=' + subject + '&body=' + body;
+      window.location.href = 'mailto:mike@certifa.net?subject=' + subject + '&body=' + body;
     }
     form.addEventListener('submit', (e) => { e.preventDefault(); send(); });
     msg.addEventListener('keydown', (e) => {
