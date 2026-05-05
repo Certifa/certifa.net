@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
-  site: 'https://certifa.github.io',
+  site: 'https://certifa.net',
   integrations: [tailwind()],
   output: 'static',
   markdown: {
