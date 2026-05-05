@@ -965,10 +965,11 @@ const projects = [
     function paint(days: Day[], total: number) {
       const byDate = new Map<string, number>();
       for (const d of days) byDate.set(d.date, d.count);
-      // Anchor = newest date in the dataset. Keeps the grid stable across
-      // page loads regardless of when the visitor's clock thinks "now" is.
-      const lastIso = days[days.length - 1]?.date;
-      const anchor = lastIso ? new Date(lastIso + 'T00:00:00Z') : new Date();
+      // Anchor = real today (UTC). The dataset's keys are also UTC dates, so
+      // lookups stay aligned. Days between the dataset's last entry and "now"
+      // simply read as level 0 — yesterday's event sits one cell back from
+      // today's slot, exactly like GitHub.
+      const anchor = new Date();
       anchor.setUTCHours(0, 0, 0, 0);
       paintGrid(byDate, anchor, total);
     }
