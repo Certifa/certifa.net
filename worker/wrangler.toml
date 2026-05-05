@@ -1,0 +1,16 @@
+name = "certifa-forms"
+main = "src/index.ts"
+compatibility_date = "2025-05-05"
+
+# Public, non-secret config. RESEND_API_KEY is set via `wrangler secret put`.
+[vars]
+ALLOWED_ORIGINS = "https://certifa.net,https://www.certifa.net,http://localhost:4321"
+TO_EMAIL = "mike@certifa.net"
+FROM_EMAIL = "Certifa Forms <forms@certifa.net>"
+
+[[routes]]
+pattern = "forms.certifa.net"
+custom_domain = true
+
+[observability]
+enabled = true

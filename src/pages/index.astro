@@ -227,19 +227,24 @@ const projects = [
             <button class="ch-copy" data-copy="Quetro" type="button"><span class="ic">◇</span>discord · Quetro</button>
           </div>
         </div>
-        <form class="hm-contact-form" id="hmContactForm" onsubmit="return false;">
+        <form class="hm-contact-form" id="hmContactForm" novalidate>
           <div class="field">
             <label for="hmEmail">your email</label>
-            <input id="hmEmail" type="email" placeholder="you@domain.dev" autocomplete="email" />
+            <input id="hmEmail" name="email" type="email" required autocomplete="email" placeholder="you@domain.dev" />
           </div>
           <div class="field">
             <label for="hmMsg">one line</label>
-            <textarea id="hmMsg" placeholder="hey certifa — i'm working on…"></textarea>
+            <textarea id="hmMsg" name="message" required minlength="3" placeholder="hey certifa — i'm working on…"></textarea>
+          </div>
+          <div class="hm-honeypot" aria-hidden="true">
+            <label for="hmBotcheck">Don't fill this in</label>
+            <input id="hmBotcheck" name="botcheck" type="text" tabindex="-1" autocomplete="off" />
           </div>
           <div class="row">
             <span class="hint" id="hmFormHint">↩ to send</span>
             <button class="hm-btn primary" type="submit" id="hmSendBtn">Send <span class="ar">→</span></button>
           </div>
+          <div class="hm-form-error" id="hmFormError" hidden></div>
         </form>
       </div>
     </div>
@@ -829,6 +834,35 @@ const projects = [
     color: var(--fg-3);
     letter-spacing: 0.04em;
   }
+  .hm-honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px; height: 1px;
+    overflow: hidden;
+  }
+  .hm-form-error {
+    margin-top: 4px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--warn, #ff5e5e) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--warn, #ff5e5e) 35%, transparent);
+    color: var(--warn, #ff5e5e);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .hm-form-success {
+    font-family: 'Geist', sans-serif;
+    font-size: 16px;
+    color: var(--accent);
+    padding: 28px 4px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .hm-btn.primary[disabled] {
+    opacity: 0.7;
+    cursor: progress;
+  }
 </style>
 
 <script>
@@ -872,30 +906,73 @@ const projects = [
     window.setTimeout(tick, 800);
   })();
 
-  // Contact form submit (mailto bridge)
+  // Contact form submit — POST to Cloudflare Worker (forms.certifa.net)
   (() => {
-    const form  = document.getElementById('hmContactForm') as HTMLFormElement | null;
-    const email = document.getElementById('hmEmail')       as HTMLInputElement   | null;
-    const msg   = document.getElementById('hmMsg')         as HTMLTextAreaElement | null;
-    const hint  = document.getElementById('hmFormHint');
-    const btn   = document.getElementById('hmSendBtn')     as HTMLButtonElement | null;
-    if (!form || !email || !msg || !hint || !btn) return;
-    function send() {
-      const v = (email!.value || '').trim();
-      if (!v || !/.+@.+\..+/.test(v)) {
-        hint!.textContent = '↳ need a valid email first';
-        hint!.style.color = 'var(--warn)';
+    const form    = document.getElementById('hmContactForm') as HTMLFormElement | null;
+    const email   = document.getElementById('hmEmail')       as HTMLInputElement | null;
+    const msg     = document.getElementById('hmMsg')         as HTMLTextAreaElement | null;
+    const bot     = document.getElementById('hmBotcheck')    as HTMLInputElement | null;
+    const btn     = document.getElementById('hmSendBtn')     as HTMLButtonElement | null;
+    const errorEl = document.getElementById('hmFormError');
+    if (!form || !email || !msg || !bot || !btn || !errorEl) return;
+
+    const ENDPOINT = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'http://localhost:8787/submit'
+      : 'https://forms.certifa.net/submit';
+
+    const showError = (text: string) => {
+      errorEl!.textContent = text;
+      errorEl!.hidden = false;
+    };
+    const clearError = () => { errorEl!.hidden = true; errorEl!.textContent = ''; };
+    const setSubmitting = (on: boolean) => {
+      btn!.disabled = on;
+      btn!.innerHTML = on ? 'Sending<span class="ar">…</span>' : 'Send <span class="ar">→</span>';
+    };
+    const showSuccess = () => {
+      form!.innerHTML = '<div class="hm-form-success">Got it — I\'ll get back to you.</div>';
+    };
+
+    async function send() {
+      clearError();
+
+      // Honeypot: filled → silently "succeed" without POSTing
+      if (bot!.value.trim() !== '') { showSuccess(); return; }
+
+      const emailVal = email!.value.trim();
+      const msgVal   = msg!.value.trim();
+
+      if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+        showError('Need a valid email address.');
         email!.focus();
         return;
       }
-      btn!.innerHTML = 'Sent ✓';
-      btn!.disabled = true;
-      hint!.textContent = '↳ thanks — i\'ll write back';
-      hint!.style.color = 'var(--accent)';
-      const subject = encodeURIComponent('hello from certifa.net');
-      const body    = encodeURIComponent((msg!.value || '') + '\n\n— ' + v);
-      window.location.href = 'mailto:mike@certifa.net?subject=' + subject + '&body=' + body;
+      if (msgVal.length < 3) {
+        showError('Message is too short — at least 3 characters.');
+        msg!.focus();
+        return;
+      }
+
+      setSubmitting(true);
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: emailVal, message: msgVal, botcheck: '' }),
+        });
+        const data = await res.json().catch(() => ({ ok: false }));
+        if (res.ok && data.ok) {
+          showSuccess();
+        } else {
+          setSubmitting(false);
+          showError("Something didn't go through — try again, or email me directly.");
+        }
+      } catch {
+        setSubmitting(false);
+        showError("Couldn't reach the server — check your connection and try again.");
+      }
     }
+
     form.addEventListener('submit', (e) => { e.preventDefault(); send(); });
     msg.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
