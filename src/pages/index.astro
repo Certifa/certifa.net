@@ -713,10 +713,13 @@ const projects = [
     display: block;
     min-width: 0;
   }
-  .hm-heatmap-grid :global(i[data-l="1"]) { background: color-mix(in srgb, var(--accent) 14%, var(--bg-3)); }
-  .hm-heatmap-grid :global(i[data-l="2"]) { background: color-mix(in srgb, var(--accent) 32%, var(--bg-3)); }
-  .hm-heatmap-grid :global(i[data-l="3"]) { background: color-mix(in srgb, var(--accent) 55%, var(--bg-3)); }
+  .hm-heatmap-grid :global(i[data-l="1"]) { background: color-mix(in srgb, var(--accent) 25%, var(--bg-3)); }
+  .hm-heatmap-grid :global(i[data-l="2"]) { background: color-mix(in srgb, var(--accent) 50%, var(--bg-3)); }
+  .hm-heatmap-grid :global(i[data-l="3"]) { background: color-mix(in srgb, var(--accent) 75%, var(--bg-3)); }
   .hm-heatmap-grid :global(i[data-l="4"]) { background: var(--accent); }
+  /* Cells in the future of the current week — render as a softer empty so
+     the partial last column reads as "not yet" rather than "missed". */
+  .hm-heatmap-grid :global(i[data-future="1"]) { opacity: 0.35; }
   .hm-heatmap-grid :global(i):hover { transform: scale(1.4); z-index: 1; position: relative; }
   .hm-heatmap-foot {
     margin-top: auto;
@@ -727,9 +730,9 @@ const projects = [
   .hm-heatmap-scale { display: flex; align-items: center; gap: 5px; }
   .hm-heatmap-scale .sc { width: 10px; height: 10px; border-radius: 2px; }
   .hm-heatmap-scale .sc[data-l="0"] { background: var(--bg-3); }
-  .hm-heatmap-scale .sc[data-l="1"] { background: color-mix(in srgb, var(--accent) 14%, var(--bg-3)); }
-  .hm-heatmap-scale .sc[data-l="2"] { background: color-mix(in srgb, var(--accent) 32%, var(--bg-3)); }
-  .hm-heatmap-scale .sc[data-l="3"] { background: color-mix(in srgb, var(--accent) 55%, var(--bg-3)); }
+  .hm-heatmap-scale .sc[data-l="1"] { background: color-mix(in srgb, var(--accent) 25%, var(--bg-3)); }
+  .hm-heatmap-scale .sc[data-l="2"] { background: color-mix(in srgb, var(--accent) 50%, var(--bg-3)); }
+  .hm-heatmap-scale .sc[data-l="3"] { background: color-mix(in srgb, var(--accent) 75%, var(--bg-3)); }
   .hm-heatmap-scale .sc[data-l="4"] { background: var(--accent); }
 
   /* CONTACT STRIP */
@@ -907,52 +910,73 @@ const projects = [
 
     type Day = { date: string; count: number };
 
+    // GitHub-style intensity ramp. Low absolute counts (0-5) map directly to
+    // levels so a 1-event day looks meaningfully different from a 3-event day.
     function levelFor(c: number): number {
       if (c <= 0) return 0;
       if (c === 1) return 1;
-      if (c <= 3) return 2;
-      if (c <= 6) return 3;
+      if (c === 2) return 2;
+      if (c <= 4) return 3;
       return 4;
     }
 
-    function paint(days: Day[], total: number) {
+    // Map UTC day-of-week (0=Sun..6=Sat) to row index (0=Mon..6=Sun).
+    function dowRow(utcDay: number): number { return (utcDay + 6) % 7; }
+
+    function isoDay(d: Date): string { return d.toISOString().slice(0, 10); }
+
+    function paintGrid(byDate: Map<string, number>, anchor: Date, total: number) {
       grid.innerHTML = '';
-      // Layout: 26 columns × 7 rows. days[] is oldest→newest, exactly 26*7 entries.
-      // Render row-major: for each row r, walk weeks w left→right.
+      // Layout: 26 columns (calendar weeks) × 7 rows (Mon..Sun).
+      // Rightmost column is the week containing `anchor`. Today sits at
+      // (col=25, row=dowRow(anchor)). One day passing = one cell shift,
+      // never a row reshuffle.
       const cols = 26;
       const rows = 7;
-      const expected = cols * rows;
-      const padded = days.length === expected
-        ? days
-        : Array.from({ length: expected }, (_, i) => days[i] || { date: '', count: 0 });
+
+      const anchorRow = dowRow(anchor.getUTCDay());
+      // Monday of the rightmost column.
+      const colStart = new Date(anchor);
+      colStart.setUTCDate(anchor.getUTCDate() - anchorRow);
 
       for (let r = 0; r < rows; r++) {
         for (let w = 0; w < cols; w++) {
-          // Index into oldest-first array.
-          const idx = w * rows + r;
-          const day = padded[idx] || { date: '', count: 0 };
-          const lvl = levelFor(day.count);
+          const cellDate = new Date(colStart);
+          cellDate.setUTCDate(colStart.getUTCDate() + (w - (cols - 1)) * 7 + r);
+
+          const iso = isoDay(cellDate);
+          const isFuture = cellDate.getTime() > anchor.getTime();
+          const count = isFuture ? 0 : (byDate.get(iso) ?? 0);
+
           const i = document.createElement('i');
-          i.dataset.l = String(lvl);
-          i.title = day.date
-            ? `${day.date} · ${day.count} event${day.count === 1 ? '' : 's'}`
-            : 'no data';
+          i.dataset.l = String(levelFor(count));
+          if (isFuture) {
+            i.dataset.future = '1';
+            i.title = '';
+          } else {
+            i.title = `${iso} · ${count} event${count === 1 ? '' : 's'}`;
+          }
           grid.appendChild(i);
         }
       }
       if (totalEl) totalEl.textContent = `${total} event${total === 1 ? '' : 's'}`;
     }
 
+    function paint(days: Day[], total: number) {
+      const byDate = new Map<string, number>();
+      for (const d of days) byDate.set(d.date, d.count);
+      // Anchor = newest date in the dataset. Keeps the grid stable across
+      // page loads regardless of when the visitor's clock thinks "now" is.
+      const lastIso = days[days.length - 1]?.date;
+      const anchor = lastIso ? new Date(lastIso + 'T00:00:00Z') : new Date();
+      anchor.setUTCHours(0, 0, 0, 0);
+      paintGrid(byDate, anchor, total);
+    }
+
     function paintEmpty() {
-      grid.innerHTML = '';
-      for (let r = 0; r < 7; r++) {
-        for (let w = 0; w < 26; w++) {
-          const i = document.createElement('i');
-          i.dataset.l = '0';
-          i.title = 'no data yet';
-          grid.appendChild(i);
-        }
-      }
+      const anchor = new Date();
+      anchor.setUTCHours(0, 0, 0, 0);
+      paintGrid(new Map(), anchor, 0);
       if (totalEl) totalEl.textContent = 'no data';
     }
 
