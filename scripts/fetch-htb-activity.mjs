@@ -122,6 +122,17 @@ async function main() {
     if (batch.length === 0) break;
 
     for (const msg of batch) {
+      if (process.env.HTB_DEBUG === '1') {
+        const dump = {
+          id: msg.id,
+          ts: msg.timestamp,
+          flags: msg.flags,
+          content: msg.content,
+          embeds: msg.embeds,
+          components: msg.components,
+        };
+        console.error('DEBUG_MSG', JSON.stringify(dump));
+      }
       const ev = extractEvent(msg);
       if (ev) events.push(ev);
     }
