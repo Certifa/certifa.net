@@ -109,6 +109,19 @@ function buildHeatmap(events) {
 
 async function main() {
   console.error(`reading discord channel ${CHANNEL_ID} for user "${HTB_USER}"`);
+
+  if (process.env.HTB_DEBUG === '1') {
+    const meRes = await fetch('https://discord.com/api/v10/users/@me', {
+      headers: { 'Authorization': `Bot ${TOKEN}` },
+    });
+    if (meRes.ok) {
+      const me = await meRes.json();
+      console.error(`DEBUG_BOT identity: ${me.username}#${me.discriminator || '0'} id=${me.id}`);
+    } else {
+      console.error(`DEBUG_BOT identity fetch failed: ${meRes.status}`);
+    }
+  }
+
   const cutoff = new Date();
   cutoff.setUTCDate(cutoff.getUTCDate() - DAYS);
 
