@@ -136,15 +136,11 @@ async function main() {
 
     for (const msg of batch) {
       if (process.env.HTB_DEBUG === '1') {
-        const dump = {
-          id: msg.id,
-          ts: msg.timestamp,
-          flags: msg.flags,
-          content: msg.content,
-          embeds: msg.embeds,
-          components: msg.components,
-        };
-        console.error('DEBUG_MSG', JSON.stringify(dump));
+        // Full raw message: we want to see fields like webhook_id,
+        // application_id, interaction_metadata, message_reference,
+        // attachments, referenced_message that may explain why
+        // some messages come through empty.
+        console.error('DEBUG_MSG_FULL', JSON.stringify(msg));
       }
       const ev = extractEvent(msg);
       if (ev) events.push(ev);
