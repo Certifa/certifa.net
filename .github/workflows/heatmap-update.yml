@@ -5,11 +5,6 @@ on:
     # 4× per day — every 6 hours, on the hour, in UTC
     - cron: '0 */6 * * *'
   workflow_dispatch:
-    inputs:
-      debug:
-        description: 'Dump every fetched Discord message to the log'
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -36,7 +31,6 @@ jobs:
         env:
           DISCORD_BOT_TOKEN:  ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
-          HTB_DEBUG: ${{ inputs.debug && '1' || '0' }}
         run: node scripts/fetch-htb-activity.mjs
 
       - name: Commit & push if changed
