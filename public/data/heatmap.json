@@ -1,15 +1,11 @@
 {
-  "generated": "2026-05-13T18:45:19.170Z",
+  "generated": "2026-05-14T00:56:44.292Z",
   "user": "Certifa",
   "user_id": "444744",
   "weeks": 26,
   "total": 7,
   "source": "discord:HTB Updates",
   "days": [
-    {
-      "date": "2025-11-13",
-      "count": 0
-    },
     {
       "date": "2025-11-14",
       "count": 0
@@ -732,6 +728,10 @@
     },
     {
       "date": "2026-05-13",
+      "count": 0
+    },
+    {
+      "date": "2026-05-14",
       "count": 0
     }
   ]
