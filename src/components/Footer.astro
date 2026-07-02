@@ -52,5 +52,11 @@ const year = new Date().getFullYear();
     color: var(--fg-2); text-decoration: none;
     transition: color .15s ease;
   }
-  .footer-links a:hover { color: var(--accent); }
+  @media (hover: hover) {
+    .footer-links a:hover { color: var(--accent); }
+  }
+  @media (max-width: 700px) {
+    /* Grow the hit area without shifting layout */
+    .footer-links a { padding: 12px 6px; margin: -12px -6px; }
+  }
 </style>

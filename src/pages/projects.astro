@@ -143,9 +143,11 @@ const rest = projects.filter((p) => !p.featured);
     position: relative;
     transition: border-color .22s ease, background .22s ease;
   }
-  .proj-row:hover { border-color: var(--line-2); background: var(--bg-3); }
+  @media (hover: hover) {
+    .proj-row:hover { border-color: var(--line-2); background: var(--bg-3); }
+  }
   @media (max-width: 900px) {
-    .proj-row { grid-template-columns: 1fr; padding: 28px 24px; gap: 24px; }
+    .proj-row { grid-template-columns: 1fr; padding: 24px; gap: 16px; }
   }
   .p-num {
     position: absolute; top: 22px; right: 28px;
@@ -162,6 +164,11 @@ const rest = projects.filter((p) => !p.featured);
     font-size: 36px; font-weight: 500;
     letter-spacing: -0.03em; line-height: 1;
     color: var(--fg);
+  }
+  @media (max-width: 900px) {
+    /* In flow as a kicker above the title, instead of overlapping it */
+    .p-num { position: static; }
+    .proj-name { font-size: 30px; }
   }
   .proj-desc {
     color: var(--fg-2); font-size: 15px;
@@ -183,9 +190,11 @@ const rest = projects.filter((p) => !p.featured);
     transition: border-color .2s ease, color .2s ease;
   }
   .proj-link.small { font-size: 13px; margin-top: 6px; }
-  .proj-link:hover { border-color: var(--accent); color: var(--accent); }
   .proj-link .arrow { transition: transform .2s ease; }
-  .proj-link:hover .arrow { transform: translate(3px, -3px); }
+  @media (hover: hover) {
+    .proj-link:hover { border-color: var(--accent); color: var(--accent); }
+    .proj-link:hover .arrow { transform: translate(3px, -3px); }
+  }
 
   .proj-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
@@ -201,7 +210,9 @@ const rest = projects.filter((p) => !p.featured);
     transition: border-color .2s ease, background .2s ease, transform .2s ease;
     display: flex; flex-direction: column; gap: 14px;
   }
-  .proj-card:hover { border-color: var(--line-2); background: var(--bg-3); transform: translateY(-2px); }
+  @media (hover: hover) {
+    .proj-card:hover { border-color: var(--line-2); background: var(--bg-3); transform: translateY(-2px); }
+  }
   .pc-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .pc-name {
     font-family: 'Geist', sans-serif;

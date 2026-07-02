@@ -23,25 +23,31 @@ const focus = [
     <div class="wrap">
       <div class="about-grid">
         <aside class="about-side" data-reveal>
-          <div class="about-label">Identity</div>
-          <div class="about-key">Certifa</div>
-          <div class="about-val">Mike · 24 y/o</div>
-
-          <div class="about-label">Location</div>
-          <div class="about-key">Utrecht</div>
-          <div class="about-val">Netherlands</div>
-
-          <div class="about-label">Studying at</div>
-          <div class="about-key">Hogeschool Utrecht</div>
-          <div class="about-val">Cybersecurity &amp; Cloud · BSc</div>
-
-          <div class="about-label">Primary Platform</div>
-          <div class="about-key">HackTheBox</div>
-          <div class="about-val">Master · peak Pro Hacker</div>
-
-          <div class="about-label">Attack OS</div>
-          <div class="about-key">Parrot</div>
-          <div class="about-val">tmux · vim · burp</div>
+          <div class="about-fact">
+            <div class="about-label">Identity</div>
+            <div class="about-key">Certifa</div>
+            <div class="about-val">Mike · 24 y/o</div>
+          </div>
+          <div class="about-fact">
+            <div class="about-label">Location</div>
+            <div class="about-key">Utrecht</div>
+            <div class="about-val">Netherlands</div>
+          </div>
+          <div class="about-fact">
+            <div class="about-label">Studying at</div>
+            <div class="about-key">Hogeschool Utrecht</div>
+            <div class="about-val">Cybersecurity &amp; Cloud · BSc</div>
+          </div>
+          <div class="about-fact">
+            <div class="about-label">Primary Platform</div>
+            <div class="about-key">HackTheBox</div>
+            <div class="about-val">Master · peak Pro Hacker</div>
+          </div>
+          <div class="about-fact">
+            <div class="about-label">Attack OS</div>
+            <div class="about-key">Parrot</div>
+            <div class="about-val">tmux · vim · burp</div>
+          </div>
         </aside>
 
         <div class="about-body" data-reveal data-reveal-delay="1">
@@ -83,7 +89,15 @@ const focus = [
   }
 
   .about-side { position: sticky; top: 100px; align-self: start; }
-  @media (max-width: 900px) { .about-side { position: static; } }
+  @media (max-width: 900px) {
+    /* Compact 2-column fact grid so the bio starts sooner */
+    .about-side {
+      position: static;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 20px;
+    }
+  }
 
   .about-label {
     font-family: 'JetBrains Mono', monospace;
@@ -93,6 +107,10 @@ const focus = [
   }
   .about-key { font-size: 16px; color: var(--fg); margin-bottom: 4px; }
   .about-val { font-size: 14px; color: var(--fg-2); margin-bottom: 20px; }
+  @media (max-width: 900px) {
+    .about-label { margin-bottom: 10px; }
+    .about-val { margin-bottom: 0; }
+  }
 
   .about-body p {
     font-size: 17px; line-height: 1.7;
@@ -129,7 +147,9 @@ const focus = [
     padding: 22px;
     transition: border-color .2s ease, background .2s ease;
   }
-  .focus-card:hover { border-color: var(--line-2); background: var(--bg-3); }
+  @media (hover: hover) {
+    .focus-card:hover { border-color: var(--line-2); background: var(--bg-3); }
+  }
   .focus-card .fc-label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px; color: var(--fg-3);

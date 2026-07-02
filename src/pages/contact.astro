@@ -89,6 +89,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     max-width: 640px; line-height: 1.6;
     margin-bottom: 72px;
   }
+  @media (max-width: 768px) {
+    .contact-title { font-size: clamp(44px, 13vw, 56px); }
+    .contact-sub { font-size: 17px; margin-bottom: 48px; }
+  }
 
   .channels {
     display: grid; grid-template-columns: repeat(2, 1fr);
@@ -108,7 +112,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     position: relative;
     transition: border-color .2s ease, background .2s ease, transform .2s ease;
   }
-  .channel:hover { border-color: var(--line-2); background: var(--bg-3); transform: translateY(-2px); }
+  @media (hover: hover) {
+    .channel:hover { border-color: var(--line-2); background: var(--bg-3); transform: translateY(-2px); }
+  }
 
   .ch-head {
     display: flex; justify-content: space-between; align-items: center;
@@ -126,7 +132,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     border: 1px solid var(--line-2);
     transition: all .2s ease;
   }
-  .channel:hover .ch-action { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  @media (hover: hover) {
+    .channel:hover .ch-action { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  }
   .ch-val {
     font-family: 'Geist', sans-serif;
     font-size: clamp(24px, 3vw, 36px);

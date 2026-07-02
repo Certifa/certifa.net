@@ -329,6 +329,9 @@ const projects = [
     margin-bottom: 24px;
   }
   .hm-name .accent { color: var(--accent); }
+  @media (max-width: 768px) {
+    .hm-name { font-size: clamp(44px, 12vw, 56px); }
+  }
   .hm-tag {
     font-size: clamp(18px, 1.7vw, 22px);
     line-height: 1.5;
@@ -355,17 +358,19 @@ const projects = [
     text-decoration: none;
     letter-spacing: -0.005em;
   }
-  .hm-btn:hover { background: var(--bg-3); border-color: var(--fg-4); transform: translateY(-1px); }
   .hm-btn .ar { transition: transform .2s ease; font-size: 14px; }
-  .hm-btn:hover .ar { transform: translateX(2px); }
   .hm-btn.primary {
     background: var(--accent);
     color: #0a0a0a;
     border-color: var(--accent);
   }
-  .hm-btn.primary:hover {
-    background: color-mix(in srgb, var(--accent) 88%, white);
-    border-color: color-mix(in srgb, var(--accent) 88%, white);
+  @media (hover: hover) {
+    .hm-btn:hover { background: var(--bg-3); border-color: var(--fg-4); transform: translateY(-1px); }
+    .hm-btn:hover .ar { transform: translateX(2px); }
+    .hm-btn.primary:hover {
+      background: color-mix(in srgb, var(--accent) 88%, white);
+      border-color: color-mix(in srgb, var(--accent) 88%, white);
+    }
   }
 
   .hm-quickstats {
@@ -405,6 +410,10 @@ const projects = [
     line-height: 1.7;
     display: flex; flex-direction: column;
     min-height: 460px;
+  }
+  @media (max-width: 920px) {
+    /* Stacked below the hero text — let content size it */
+    .hm-term { min-height: 0; }
   }
   .hm-term-head {
     display: flex; align-items: center; gap: 8px;
@@ -488,9 +497,11 @@ const projects = [
     display: inline-flex; align-items: center; gap: 6px;
     transition: color .2s ease;
   }
-  .hm-sec-link:hover { color: var(--accent); }
   .hm-sec-link .ar { transition: transform .2s ease; }
-  .hm-sec-link:hover .ar { transform: translateX(3px); }
+  @media (hover: hover) {
+    .hm-sec-link:hover { color: var(--accent); }
+    .hm-sec-link:hover .ar { transform: translateX(3px); }
+  }
 
   /* WRITEUPS — featured + 3-up */
   .hm-wu-stack { display: flex; flex-direction: column; gap: 16px; }
@@ -521,9 +532,11 @@ const projects = [
     transition: all .35s ease;
     font-weight: 600;
   }
-  .hm-wu:hover { background: var(--bg-3); border-color: var(--line-2); transform: translateY(-2px); }
-  .hm-wu:hover::before { color: color-mix(in srgb, var(--accent) 16%, transparent); transform: rotate(-3deg) translate(-4px, 4px); }
-  .hm-wu:hover .hm-wu-arrow { color: var(--accent); transform: translate(2px, -2px); }
+  @media (hover: hover) {
+    .hm-wu:hover { background: var(--bg-3); border-color: var(--line-2); transform: translateY(-2px); }
+    .hm-wu:hover::before { color: color-mix(in srgb, var(--accent) 16%, transparent); transform: rotate(-3deg) translate(-4px, 4px); }
+    .hm-wu:hover .hm-wu-arrow { color: var(--accent); transform: translate(2px, -2px); }
+  }
   .hm-wu > * { position: relative; z-index: 1; }
   .hm-wu-meta {
     display: flex; justify-content: space-between; align-items: center;
@@ -618,9 +631,11 @@ const projects = [
     opacity: 0.45;
     transition: all .22s ease;
   }
-  .hm-pj:hover { background: var(--bg-3); border-color: var(--line-2); padding-left: 32px; }
-  .hm-pj:hover::before { top: 0; bottom: 0; opacity: 1; width: 4px; }
-  .hm-pj:hover .hm-pj-arrow { color: var(--accent); transform: translateX(3px); }
+  @media (hover: hover) {
+    .hm-pj:hover { background: var(--bg-3); border-color: var(--line-2); padding-left: 32px; }
+    .hm-pj:hover::before { top: 0; bottom: 0; opacity: 1; width: 4px; }
+    .hm-pj:hover .hm-pj-arrow { color: var(--accent); transform: translateX(3px); }
+  }
   .hm-pj-icon {
     width: 56px; height: 56px;
     border-radius: 10px;
@@ -689,7 +704,9 @@ const projects = [
     text-decoration: none;
   }
   .hm-about-text .more .ar { transition: transform .2s ease; }
-  .hm-about-text .more:hover .ar { transform: translateX(3px); }
+  @media (hover: hover) {
+    .hm-about-text .more:hover .ar { transform: translateX(3px); }
+  }
 
   .hm-heatmap {
     background: var(--bg-2);
@@ -725,7 +742,9 @@ const projects = [
   /* Cells in the future of the current week — render as a softer empty so
      the partial last column reads as "not yet" rather than "missed". */
   .hm-heatmap-grid :global(i[data-future="1"]) { opacity: 0.35; }
-  .hm-heatmap-grid :global(i):hover { transform: scale(1.4); z-index: 1; position: relative; }
+  @media (hover: hover) {
+    .hm-heatmap-grid :global(i):hover { transform: scale(1.4); z-index: 1; position: relative; }
+  }
   .hm-heatmap-foot {
     margin-top: auto;
     display: flex; justify-content: space-between; align-items: center;
@@ -778,15 +797,21 @@ const projects = [
     transition: all .18s ease;
     cursor: pointer;
   }
-  .hm-contact-channels a:hover,
-  .hm-contact-channels button:hover {
-    background: color-mix(in srgb, var(--accent) 8%, transparent);
-    border-color: color-mix(in srgb, var(--accent) 35%, transparent);
-    color: var(--accent);
-    transform: translateY(-1px);
-  }
   .hm-contact-channels .ic { color: var(--fg-3); transition: color .18s ease; }
-  .hm-contact-channels a:hover .ic, .hm-contact-channels button:hover .ic { color: var(--accent); }
+  @media (hover: hover) {
+    .hm-contact-channels a:hover,
+    .hm-contact-channels button:hover {
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .hm-contact-channels a:hover .ic, .hm-contact-channels button:hover .ic { color: var(--accent); }
+  }
+  @media (max-width: 768px) {
+    .hm-contact-channels a,
+    .hm-contact-channels button { min-height: 44px; padding: 10px 14px; }
+  }
 
   /* Contact form */
   .hm-contact-form {
@@ -834,6 +859,15 @@ const projects = [
     color: var(--fg-3);
     letter-spacing: 0.04em;
   }
+  @media (max-width: 768px) {
+    /* 16px minimum stops mobile Safari from zooming into focused fields */
+    .hm-contact-form input,
+    .hm-contact-form textarea { font-size: 16px; }
+  }
+  @media (hover: none) {
+    /* "enter to send" doesn't apply to touch keyboards */
+    .hm-contact-form .hint { visibility: hidden; }
+  }
   .hm-honeypot {
     position: absolute;
     left: -9999px;
@@ -878,6 +912,11 @@ const projects = [
       ['ls ~/learning',         'always one box behind where i want to be'],
       ['date +%status',         'studying CCNA · grinding · curious'],
     ];
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      line2.textContent = pairs[0][0];
+      cmt.textContent = pairs[0][1];
+      return;
+    }
     let pi = 0, ci = 0, deleting = false, cmtTimer: number | undefined;
     function showComment(text: string) {
       cmt!.style.transition = 'opacity .35s ease';

@@ -232,6 +232,9 @@ body::before {
   font-style: italic; font-weight: 400;
   color: var(--accent);
 }
+@media (max-width: 768px) {
+  .page-title { font-size: clamp(38px, 11vw, 48px); }
+}
 .page-sub {
   font-size: 18px; color: var(--fg-2);
   max-width: 640px; line-height: 1.6;
@@ -417,4 +420,18 @@ body::before {
   /* Bigger tap targets inside the mobile TOC drawer */
   .toc-link { padding: 10px 0 10px 0.75rem; font-size: 14px; }
   .toc-link.depth-3 { font-size: 13px; }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  /* Scroll-reveal content must not stay hidden */
+  [data-reveal] { opacity: 1; transform: none; }
 }
