@@ -49,14 +49,17 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
         {tocHeadings.length > 0 && (
           <aside class="wu-toc-wrap">
-            <div class="wu-toc">
-              <div class="wu-toc-title">On this page</div>
+            <details class="wu-toc" id="wuToc" open>
+              <summary class="wu-toc-title">
+                On this page
+                <span class="wu-toc-chevron" aria-hidden="true">▾</span>
+              </summary>
               <nav class="wu-toc-list">
                 {tocHeadings.map((h) => (
                   <a href={`#${h.slug}`} class={`toc-link depth-${h.depth}`}>{h.text}</a>
                 ))}
               </nav>
-            </div>
+            </details>
           </aside>
         )}
       </div>
@@ -67,43 +70,66 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
     </div>
   </article>
 
-  <!-- Mermaid: render diagram code blocks client-side -->
+  <!-- Mermaid: render diagram code blocks client-side (loaded only when a diagram exists) -->
   <script type="module" is:inline>
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: 'base',
-      themeVariables: {
-        darkMode: true,
-        background: '#0a0a0a',
-        primaryColor: '#161616',
-        primaryTextColor: '#ededed',
-        primaryBorderColor: 'rgba(170, 240, 200, 0.35)',
-        lineColor: 'rgba(170, 240, 200, 0.85)',
-        secondaryColor: '#111111',
-        tertiaryColor: '#1f1f1f',
-        edgeLabelBackground: '#0a0a0a',
-        nodeTextColor: '#ededed',
-        clusterBkg: '#111111',
-        titleColor: '#ededed',
-      },
-    });
     const diagrams = document.querySelectorAll('pre[data-language="mermaid"]');
-    for (const pre of diagrams) {
-      const code = pre.querySelector('code');
-      const text = (code ?? pre).textContent.trim();
-      const id = 'mermaid-' + Math.random().toString(36).slice(2, 8);
-      try {
-        const { svg } = await mermaid.render(id, text);
-        const wrapper = document.createElement('div');
-        wrapper.className = 'mermaid-diagram';
-        wrapper.innerHTML = svg;
-        pre.replaceWith(wrapper);
-      } catch (e) {}
+    if (diagrams.length > 0) {
+      const { default: mermaid } = await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs');
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        themeVariables: {
+          darkMode: true,
+          background: '#0a0a0a',
+          primaryColor: '#161616',
+          primaryTextColor: '#ededed',
+          primaryBorderColor: 'rgba(170, 240, 200, 0.35)',
+          lineColor: 'rgba(170, 240, 200, 0.85)',
+          secondaryColor: '#111111',
+          tertiaryColor: '#1f1f1f',
+          edgeLabelBackground: '#0a0a0a',
+          nodeTextColor: '#ededed',
+          clusterBkg: '#111111',
+          titleColor: '#ededed',
+        },
+      });
+      for (const pre of diagrams) {
+        const code = pre.querySelector('code');
+        const text = (code ?? pre).textContent.trim();
+        const id = 'mermaid-' + Math.random().toString(36).slice(2, 8);
+        try {
+          const { svg } = await mermaid.render(id, text);
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mermaid-diagram';
+          wrapper.innerHTML = svg;
+          pre.replaceWith(wrapper);
+        } catch (e) {}
+      }
     }
   </script>
 
   <script>
+    // Wrap tables so wide ones scroll horizontally instead of overflowing the viewport
+    document.querySelectorAll('.prose-writeup table').forEach((table) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+      table.parentNode?.insertBefore(wrap, table);
+      wrap.appendChild(table);
+    });
+
+    // TOC: always-open sticky sidebar on desktop, collapsed drawer on mobile
+    const toc = document.getElementById('wuToc') as HTMLDetailsElement | null;
+    if (toc) {
+      const mq = window.matchMedia('(min-width: 1001px)');
+      const syncToc = () => { toc.open = mq.matches; };
+      syncToc();
+      mq.addEventListener('change', syncToc);
+      // Collapse after picking a heading on mobile
+      toc.querySelectorAll('a').forEach((a) =>
+        a.addEventListener('click', () => { if (!mq.matches) toc.open = false; })
+      );
+    }
+
     // Copy buttons on code blocks
     document.querySelectorAll('.prose-writeup pre').forEach((pre) => {
       const btn = document.createElement('button');
@@ -195,6 +221,19 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
   }
   .wu-tags { display: flex; flex-wrap: wrap; gap: 6px; }
 
+  @media (max-width: 768px) {
+    .wu-head { margin-bottom: 40px; padding-bottom: 24px; }
+    .wu-head-meta { margin-bottom: 16px; row-gap: 6px; }
+    .wu-dot { display: none; }
+    .wu-title {
+      font-size: clamp(30px, 8.5vw, 40px);
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+    .wu-desc { font-size: 16.5px; }
+    .wu-back { margin-bottom: 28px; }
+  }
+
   .wu-grid {
     display: grid;
     grid-template-columns: 1fr 220px;
@@ -221,7 +260,26 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
     color: var(--fg-3);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    list-style: none;
+    cursor: default;
+    user-select: none;
+    pointer-events: none; /* desktop sidebar is not toggleable */
+  }
+  .wu-toc-title::-webkit-details-marker { display: none; }
+  .wu-toc[open] .wu-toc-title { margin-bottom: 12px; }
+  .wu-toc-chevron { display: none; }
+  @media (max-width: 1000px) {
+    .wu-toc { padding: 4px 16px; }
+    .wu-toc-title { cursor: pointer; font-size: 11.5px; padding: 14px 0; pointer-events: auto; }
+    .wu-toc[open] .wu-toc-title { margin-bottom: 4px; }
+    .wu-toc-chevron {
+      display: inline-block;
+      font-size: 13px;
+      transition: transform .18s ease;
+    }
+    .wu-toc[open] .wu-toc-chevron { transform: rotate(180deg); }
+    .wu-toc-list { padding-bottom: 12px; }
   }
   .wu-toc-list { display: flex; flex-direction: column; gap: 2px; }
 

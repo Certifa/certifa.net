@@ -260,6 +260,7 @@ body::before {
   font-family: 'Geist', system-ui, sans-serif;
   font-size: 17px; line-height: 1.8;
   max-width: 760px;
+  min-width: 0; /* grid item: keep wide content from blowing out the viewport */
 }
 .prose-writeup > * + * { margin-top: 1.1rem; }
 .prose-writeup h1, .prose-writeup h2, .prose-writeup h3, .prose-writeup h4 {
@@ -308,6 +309,7 @@ body::before {
   padding: 2px 7px;
   border-radius: 4px;
   color: var(--fg);
+  overflow-wrap: anywhere; /* long hashes/paths wrap instead of overflowing */
 }
 .prose-writeup pre {
   background: var(--bg-2);
@@ -333,6 +335,11 @@ body::before {
 .prose-writeup ul, .prose-writeup ol { padding-left: 1.4rem; color: var(--fg-2); }
 .prose-writeup li { margin: 0.3rem 0; }
 .prose-writeup li::marker { color: var(--fg-3); }
+.prose-writeup .table-wrap {
+  overflow-x: auto;
+  margin: 1.6rem 0;
+}
+.prose-writeup .table-wrap table { margin: 0; }
 .prose-writeup table {
   width: 100%; border-collapse: collapse;
   margin: 1.6rem 0; font-size: 14px;
@@ -376,6 +383,17 @@ body::before {
   cursor: pointer; transition: all .15s ease;
 }
 .copy-btn:hover { color: var(--fg); border-color: var(--line-2); }
+@media (max-width: 768px) {
+  /* Reserve a strip above the code so the button never covers the first line,
+     and grow it to a 44px touch target */
+  .prose-writeup pre { padding: 3.3rem 1rem 1.1rem; }
+  .copy-btn {
+    top: 0.5rem; right: 0.5rem;
+    min-height: 44px; min-width: 64px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+}
 
 /* =========================================================
    TABLE OF CONTENTS (writeup pages)
@@ -395,3 +413,8 @@ body::before {
   border-left-color: var(--accent);
 }
 .toc-link.depth-3 { font-size: 12px; padding-left: 1.5rem; }
+@media (max-width: 1000px) {
+  /* Bigger tap targets inside the mobile TOC drawer */
+  .toc-link { padding: 10px 0 10px 0.75rem; font-size: 14px; }
+  .toc-link.depth-3 { font-size: 13px; }
+}

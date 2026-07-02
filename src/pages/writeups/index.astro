@@ -94,10 +94,13 @@ const counts = {
     transform: scaleY(0); transform-origin: center;
     transition: transform .22s ease;
   }
-  .wu-row:hover::before { transform: scaleY(1); }
-  .wu-row:hover { padding-left: 16px; padding-right: 16px; background: var(--bg-2); }
+  @media (hover: hover) {
+    .wu-row:hover::before { transform: scaleY(1); }
+    .wu-row:hover { padding-left: 16px; padding-right: 16px; background: var(--bg-2); }
+  }
   @media (max-width: 700px) {
     .wu-row { grid-template-columns: 1fr; gap: 12px; padding: 24px 0; }
+    .wu-num { display: none; }
   }
   .wu-num {
     font-family: 'JetBrains Mono', monospace;
