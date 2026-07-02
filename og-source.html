@@ -1,143 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 1200px; height: 630px; overflow: hidden; }
-  body {
-    background: #0a0a0a;
-    font-family: 'Geist', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .term {
-    width: 1104px;
-    height: 534px;
-    background: #111111;
-    border: 1px solid #2a2a2a;
-    border-radius: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
-  .head {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 20px 28px;
-    background: #161616;
-    border-bottom: 1px solid #222;
-    flex-shrink: 0;
-  }
-  .dots { display: flex; gap: 10px; }
-  .dots span { width: 16px; height: 16px; border-radius: 50%; opacity: 0.6; }
-  .dots span:nth-child(1) { background: #ff5f57; }
-  .dots span:nth-child(2) { background: #ffbd2e; }
-  .dots span:nth-child(3) { background: #28c940; }
-  .title {
-    flex: 1;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 18px;
-    color: #6b6b6b;
-    letter-spacing: 0.04em;
-  }
-  .badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 15px;
-    color: #6b6b6b;
-    padding: 4px 12px;
-    border: 1px solid #2a2a2a;
-    border-radius: 6px;
-    letter-spacing: 0.06em;
-  }
-  .body {
-    flex: 1;
-    padding: 38px 56px 34px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    background: radial-gradient(ellipse at top right, rgba(124, 193, 236, 0.05), transparent 60%), #111111;
-  }
-  .line {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 26px;
-    color: #ededed;
-  }
-  .line .pr { color: #7cc1ec; margin-right: 16px; }
-  .name {
-    font-weight: 600;
-    font-size: 128px;
-    letter-spacing: -0.04em;
-    line-height: 1;
-    color: #ededed;
-    margin: 14px 0 30px;
-  }
-  .name .dot { color: #7cc1ec; }
-  .kv {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 25px;
-    display: flex;
-    margin-bottom: 12px;
-  }
-  .kv .k { color: #6b6b6b; width: 170px; flex-shrink: 0; }
-  .kv .v { color: #a0a0a0; }
-  .kv .v b { color: #ededed; font-weight: 500; }
-  .kv .v .acc { color: #7cc1ec; }
-  .foot {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 26px;
-    color: #ededed;
-  }
-  .foot .pr { color: #7cc1ec; margin-right: 16px; }
-  .cursor {
-    display: inline-block;
-    width: 15px;
-    height: 32px;
-    background: #7cc1ec;
-    margin-left: 14px;
-    vertical-align: -4px;
-  }
-  .ghost {
-    position: absolute;
-    right: -70px;
-    top: 30px;
-    width: 520px;
-    height: 520px;
-    opacity: 0.05;
-    pointer-events: none;
-  }
-</style>
-</head>
-<body>
-  <div class="term">
-    <div class="head">
-      <div class="dots"><span></span><span></span><span></span></div>
-      <div class="title">~/certifa — zsh</div>
-      <div class="badge">portfolio · writeups</div>
-    </div>
-    <div class="body">
-      <svg class="ghost" viewBox="0 0 24 24" fill="none" stroke="#ededed" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M19 6.5 A8 8 0 1 0 19 17.5"/>
-        <path d="M12 8.5 L12 15.5"/>
-        <circle cx="16.5" cy="12" r="0.9" fill="#ededed" stroke="none"/>
-      </svg>
-      <div class="line"><span class="pr">$</span>whoami</div>
-      <div class="name">Certifa<span class="dot">.</span></div>
-      <div class="kv"><span class="k">role</span><span class="v">offensive security student</span></div>
-      <div class="kv"><span class="k">rank</span><span class="v"><b>HackTheBox Master</b> · 50+ machines</span></div>
-      <div class="kv"><span class="k">focus</span><span class="v"><span class="acc">Active Directory · web · privesc</span></span></div>
-      <div class="foot"><span class="pr">$</span>open certifa.net<span class="cursor"></span></div>
-    </div>
-  </div>
-</body>
-</html>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{background:#0a0a0a;font-family:'Geist',sans-serif;padding:88px 96px;display:flex;flex-direction:column;position:relative}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:22px;color:#6b6b6b;letter-spacing:0.28em;text-transform:uppercase}
+  .name{font-weight:600;font-size:184px;letter-spacing:-0.045em;line-height:0.9;color:#ededed;margin-top:auto}
+  .name .dot{color:#7cc1ec}
+  .sub{font-size:31px;color:#a0a0a0;line-height:1.45;margin-top:38px;max-width:22ch}
+  .sub b{color:#ededed;font-weight:500}
+  .rule{height:1px;background:#2a2a2a;margin-top:auto}
+  .foot{display:flex;justify-content:space-between;align-items:center;margin-top:26px;font-family:'JetBrains Mono',monospace;font-size:21px;color:#6b6b6b;letter-spacing:0.04em}
+  .foot .site{color:#a0a0a0}
+  .glyph{position:absolute;right:80px;top:80px;width:88px;height:88px;color:#7cc1ec;opacity:0.9}
+</style></head><body>
+  <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 6.5 A8 8 0 1 0 19 17.5"/><path d="M12 8.5 L12 15.5"/><circle cx="16.5" cy="12" r="0.9" fill="currentColor" stroke="none"/></svg>
+  <div class="kicker">Offensive Security · Utrecht</div>
+  <div class="name">Certifa<span class="dot">.</span></div>
+  <div class="sub">HackTheBox writeups on <b>Active Directory</b>, web, and privilege escalation.</div>
+  <div class="rule"></div>
+  <div class="foot"><span>HackTheBox Master · 50+ machines</span><span class="site">certifa.net</span></div>
+</body></html>
