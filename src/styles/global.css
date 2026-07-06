@@ -57,12 +57,6 @@ body::before {
    UTILITIES
    ========================================================= */
 .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-.serif-italic {
-  font-family: 'Instrument Serif', serif;
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-}
 .accent-text { color: var(--accent); }
 
 .wrap {
@@ -128,11 +122,6 @@ body::before {
   background: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
-.pill .dot.pulse { animation: pulse 2s ease-in-out infinite; }
-@keyframes pulse {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
 
 .chip {
   font-family: 'JetBrains Mono', monospace;
@@ -174,24 +163,20 @@ body::before {
 .diff-hard   { color: oklch(0.72 0.17 30);  border-color: color-mix(in srgb, oklch(0.72 0.17 30) 40%, transparent); }
 .diff-insane { color: oklch(0.78 0.14 320); border-color: color-mix(in srgb, oklch(0.78 0.14 320) 40%, transparent); }
 
-.feat-pill {
+/* Neutral badge — one treatment shared by "featured" and status labels.
+   Difficulty is the only badge that carries color, since there the color
+   encodes real information. */
+.feat-pill,
+.status-pill {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; letter-spacing: 0.08em;
   padding: 3px 9px; border-radius: 999px;
-  color: var(--accent);
-  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--fg-2);
+  border: 1px solid var(--line-2);
   text-transform: uppercase;
 }
-
-.status-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; letter-spacing: 0.05em;
-  padding: 3px 10px; border-radius: 999px;
-  border: 1px solid; text-transform: lowercase;
-}
-.st-active   { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
-.st-completed{ color: oklch(0.78 0.13 220); border-color: color-mix(in srgb, oklch(0.78 0.13 220) 40%, transparent); }
-.st-ongoing  { color: var(--fg-2); border-color: var(--line-2); }
+.status-pill { text-transform: lowercase; letter-spacing: 0.05em; }
+.st-active, .st-completed, .st-ongoing { color: var(--fg-2); border-color: var(--line-2); }
 
 /* =========================================================
    SECTION HEADERS / PAGE HEADS
@@ -293,9 +278,8 @@ body::before {
 .prose-writeup p { color: var(--fg-2); }
 .prose-writeup strong { color: var(--fg); font-weight: 500; }
 .prose-writeup em {
-  font-family: 'Instrument Serif', serif;
   font-style: italic;
-  color: var(--accent);
+  color: var(--fg);
 }
 .prose-writeup a {
   color: var(--accent);

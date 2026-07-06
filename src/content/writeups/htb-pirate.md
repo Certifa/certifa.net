@@ -4,7 +4,7 @@ date: 2026-03-01
 tags: [windows, active-directory, pre2k, gmsa, kerberos, ntlm-relay, rbcd, constrained-delegation, spn-jacking, ligolo-ng, privesc]
 difficulty: hard
 platform: HTB
-description: "Active HackTheBox machine — full writeup published after retirement."
+description: "Active HackTheBox machine. Full writeup published after retirement."
 featured: true
 ---
 

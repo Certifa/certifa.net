@@ -4,7 +4,7 @@ date: 2026-03-15
 tags: [linux, MCP, CVE-2026-23744, subdomain-enumeration, docker, privesc]
 difficulty: easy
 platform: HTB
-description: "Active HackTheBox machine — full writeup published after retirement."
+description: "Active HackTheBox machine. Full writeup published after retirement."
 featured: false
 ---
 

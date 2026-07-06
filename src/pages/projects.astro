@@ -20,14 +20,14 @@ const projects: Project[] = [
     status: 'active',
     desc: '50+ machines across Easy → Insane. Master rank, peak Pro Hacker. The main proving ground for Active Directory, Linux/Windows privesc, and web exploitation.',
     tags: ['HTB', 'Pentesting', 'Active Directory'],
-    link: 'https://app.hackthebox.com/users/444744',
+    link: 'https://profile.hackthebox.com/profile/019c2f48-7b5d-73a8-b798-3ee811960672',
     label: 'View profile',
   },
   {
     name: 'HTB Tracker',
     featured: true,
     status: 'active',
-    desc: 'Personal web dashboard tracking completed HTB machines — difficulty breakdown, platform stats, progress telemetry. Vanilla JS + GitHub Pages.',
+    desc: 'Personal web dashboard tracking completed HTB machines: difficulty breakdown, platform stats, progress telemetry. Vanilla JS + GitHub Pages.',
     tags: ['JavaScript', 'Dashboard', 'GitHub Pages'],
     link: 'https://certifa.github.io/htb-tracker/',
     label: 'Open tracker',
@@ -52,7 +52,7 @@ const projects: Project[] = [
     name: 'This Portfolio',
     featured: false,
     status: 'active',
-    desc: 'Built with Astro + Tailwind CSS. Mint editorial palette, content collections for writeups, GitHub Actions CI to Pages.',
+    desc: 'Built with Astro + Tailwind CSS. Content collections drive the writeups; GitHub Actions deploys to Pages.',
     tags: ['Astro', 'Tailwind', 'GitHub Actions'],
     link: 'https://github.com/Certifa/certifa.github.io',
     label: 'Source',
@@ -74,9 +74,9 @@ const rest = projects.filter((p) => !p.featured);
   <section class="proj-wrap">
     <div class="wrap">
       <div class="proj-featured">
-        {featured.map((p, i) => (
+        {featured.map((p) => (
           <article class="proj-row" data-reveal>
-            <span class="p-num">{String(i + 1).padStart(2, '0')} / featured</span>
+            <span class="p-num">featured</span>
             <div>
               <div class="proj-head">
                 <h3 class="proj-name">{p.name}</h3>

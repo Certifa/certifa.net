@@ -2,20 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const focus = [
-  { label: '01 · win',  title: 'Active Directory',     desc: 'Kerberos abuse, BloodHound paths, NTLM relay, certificate services, full domain compromise.' },
-  { label: '02 · web',  title: 'Web Exploitation',     desc: 'SQLi, SSRF, auth bypass, chained logic flaws via Burp Suite as a scalpel.' },
-  { label: '03 · priv', title: 'Privilege Escalation', desc: 'Linux + Windows — weak services, SUID chains, DLL hijack, token impersonation.' },
-  { label: '04 · hash', title: 'Password Attacks',     desc: 'Hashcat rules, Responder, Pass-the-Hash, credential hunting on AD.' },
-  { label: '05 · code', title: 'Python Automation',    desc: 'Recon orchestration — nmap + ffuf + gobuster into a single pipeline.' },
-  { label: '06 · net',  title: 'Networking',           desc: 'CCNA in progress — routing, VLANs, ACLs, the plumbing under every box.' },
+  { label: 'windows', title: 'Active Directory',     desc: 'Kerberos abuse, BloodHound paths, NTLM relay, certificate services, full domain compromise.' },
+  { label: 'web',     title: 'Web Exploitation',     desc: 'SQLi, SSRF, auth bypass, and chained logic flaws, manual-first with Burp Suite.' },
+  { label: 'privesc', title: 'Privilege Escalation', desc: 'Linux + Windows: weak services, SUID chains, DLL hijack, token impersonation.' },
+  { label: 'creds',   title: 'Password Attacks',     desc: 'Hashcat rules, Responder, Pass-the-Hash, credential hunting on AD.' },
+  { label: 'tooling', title: 'Python Automation',    desc: 'Recon orchestration: nmap + ffuf + gobuster into a single pipeline.' },
+  { label: 'network', title: 'Networking',           desc: 'CCNA in progress: routing, VLANs, ACLs, the plumbing under every box.' },
 ];
 ---
-<BaseLayout title="About" description="Mike — offensive security student at Hogeschool Utrecht, HackTheBox Master.">
+<BaseLayout title="About" description="Mike, offensive security student at Hogeschool Utrecht and HackTheBox Master.">
   <section class="page-head">
     <div class="wrap">
       <div class="page-kicker" data-reveal>/ about</div>
       <h1 class="page-title" data-reveal data-reveal-delay="1">A student who <span class="italic">breaks things</span><br/>for a grade.</h1>
-      <p class="page-sub" data-reveal data-reveal-delay="2">Offensive security student at Hogeschool Utrecht. 24 years old. Most at home inside an Active Directory that wishes I wasn't.</p>
+      <p class="page-sub" data-reveal data-reveal-delay="2">Offensive security student at Hogeschool Utrecht. 24 years old. Active Directory, Linux, and web. Whatever the box asks for.</p>
     </div>
   </section>
 
@@ -51,11 +51,11 @@ const focus = [
         </aside>
 
         <div class="about-body" data-reveal data-reveal-delay="1">
-          <p>My primary playground is <b>HackTheBox</b> — <code>50+</code> machines across Easy → Insane. I write everything up <em>after the box retires</em>, because the lesson lives in the explanation, not the root flag.</p>
+          <p>My main platform is <b>HackTheBox</b>: <code>50+</code> machines across Easy → Insane. I write a machine up <em>after it retires</em>, because explaining the chain is where the learning actually sticks.</p>
 
-          <p>On the <b>Windows</b> side: Kerberos abuse — AS-REP, Kerberoast, delegation chains — BloodHound path-finding, NTLM relay, and certificate services abuse. I run a <b>Server 2022 DC</b> and two workstations at home, so nothing I do on HTB feels unfamiliar when I sit down at it.</p>
+          <p>On the <b>Windows</b> side: Kerberos abuse (AS-REP, Kerberoast, delegation chains), BloodHound path-finding, NTLM relay, and certificate services abuse. I run a <b>Server 2022 DC</b> and two workstations at home to rebuild the same attacks outside the platform.</p>
 
-          <p>On <b>Linux</b>: privesc through weak services, SUID chains, misconfigured cron. On the <b>web</b>: SQLi, SSRF, auth bypass, chained logic bugs. Burp as a scalpel — not a shotgun.</p>
+          <p>On <b>Linux</b>: privesc through weak services, SUID chains, misconfigured cron. On the <b>web</b>: SQLi, SSRF, auth bypass, chained logic bugs, manual-first with Burp.</p>
 
           <p>I glue my recon together with <b>Python</b>: <code>nmap</code>, <code>ffuf</code>, <code>gobuster</code> piped into a single report template. Currently grinding <b>CCNA</b> because the best attackers actually understand the network they're living in. Next on the cert list: <b>CJCA</b> and <b>CPTS</b>.</p>
 
@@ -119,10 +119,6 @@ const focus = [
     max-width: 700px;
   }
   .about-body p b { color: var(--fg); font-weight: 500; }
-  .about-body p em {
-    font-family: 'Instrument Serif', serif;
-    font-style: italic; color: var(--accent); font-weight: 400;
-  }
   .about-body p code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 14px;

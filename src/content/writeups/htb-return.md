@@ -62,11 +62,11 @@ The **Settings** page is the interesting part:
 
 ![Printer settings showing svc-printer and LDAP port 389](/images/writeups/return/printersettings-3.png)
 
-Username `svc-printer` and Server Port `389` (LDAP). Printers store AD credentials to query the user list — we can capture them by pointing the Server Address to our listener.
+Username `svc-printer` and Server Port `389` (LDAP). Printers store AD credentials to query the user list, we can capture them by pointing the Server Address to our listener.
 
 ---
 
-## Exploitation — Credential Capture
+## Exploitation: Credential Capture
 
 ```bash
 nc -lvnp 389
@@ -94,7 +94,7 @@ type C:\Users\svc-printer\Desktop\user.txt
 
 ---
 
-## Privilege Escalation — Server Operators
+## Privilege Escalation: Server Operators
 
 ```powershell
 net user svc-printer
@@ -102,7 +102,7 @@ net user svc-printer
 
 ![net user output showing Server Operators group](/images/writeups/return/show-net-user-7.png)
 
-`svc-printer` is a member of **Server Operators** — can start/stop services. We modify a service's binary path to run our payload as SYSTEM.
+`svc-printer` is a member of **Server Operators**, can start/stop services. We modify a service's binary path to run our payload as SYSTEM.
 
 ### Generate payload
 
@@ -169,7 +169,7 @@ type C:\Users\Administrator\Desktop\root.txt
 
 ## Lessons Learned
 
-- Printers and network devices store AD credentials — a rogue LDAP listener is all it takes
+- Printers and network devices store AD credentials, a rogue LDAP listener is all it takes
 - **Server Operators** is a frequently overlooked high-privilege group
 - Modifying service binary paths is a reliable, stable privesc vector
 - Least-privilege service accounts and network segmentation prevent this entirely

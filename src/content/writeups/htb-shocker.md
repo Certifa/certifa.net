@@ -119,7 +119,7 @@ Just an uptime test script
 
 ---
 
-## Foothold —> Shellshock (CVE-2014-6271)
+## Foothold → Shellshock (CVE-2014-6271)
 
 ### Why it's vulnerable
 
@@ -140,10 +140,10 @@ uid=1000(shelly) gid=1000(shelly) groups=1000(shelly),4(adm),24(cdrom),30(dip),4
 ```
 Breaking down the payload:
 
-- `() { :; }` —> an empty, do nothing function. It's the bait: Bash recognises the `() { ... }` shape in an env var and enters the vulnerable function-parsing path. Without it, the payload is just an inert string.
-- `;` —> the exact spot where patched Bash stops and vulnerable Bash keeps executing.
-- `echo; echo;` — prints blank lines so our output doesn't collide with the CGI response headers. **This matters in practice:** running the command bare (e.g. just `id` with no `/bin/bash -c` wrapper) returned a 500 Internal Server Error, because the command's output corrupted the CGI header/body structure Apache expects. The wrapper + echoes keep the response valid.
-- `/bin/bash -c "id"` —> the command we actually want run on the server.
+- `() { :; }` → an empty, do nothing function. It's the bait: Bash recognises the `() { ... }` shape in an env var and enters the vulnerable function-parsing path. Without it, the payload is just an inert string.
+- `;` → the exact spot where patched Bash stops and vulnerable Bash keeps executing.
+- `echo; echo;`: prints blank lines so our output doesn't collide with the CGI response headers. **This matters in practice:** running the command bare (e.g. just `id` with no `/bin/bash -c` wrapper) returned a 500 Internal Server Error, because the command's output corrupted the CGI header/body structure Apache expects. The wrapper + echoes keep the response valid.
+- `/bin/bash -c "id"` → the command we actually want run on the server.
 
 ### Reverse shell
 
@@ -171,7 +171,7 @@ export TERM=xterm
 
 ---
 
-## Privilege Escalation —> sudo/perl
+## Privilege Escalation → sudo/perl
 
 First move on any Linux box: `sudo -l`.
 
@@ -238,5 +238,5 @@ sudo perl -e 'exec "/bin/bash"'
 
 ## References
 
-- [Shellshock — CVE-2014-6271](https://nvd.nist.gov/vuln/detail/CVE-2014-6271)
-- [GTFOBins — perl](https://gtfobins.org/gtfobins/perl/)
+- [Shellshock: CVE-2014-6271](https://nvd.nist.gov/vuln/detail/CVE-2014-6271)
+- [GTFOBins: perl](https://gtfobins.org/gtfobins/perl/)

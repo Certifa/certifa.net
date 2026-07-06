@@ -1,17 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="Contact" description="Reach out — Discord, GitHub, HackTheBox, email, LinkedIn.">
+<BaseLayout title="Contact" description="Reach out via Discord, GitHub, HackTheBox, email, or LinkedIn.">
   <section class="contact-hero">
     <div class="wrap">
       <div class="page-kicker" data-reveal>/ contact</div>
       <h1 class="contact-title" data-reveal data-reveal-delay="1">Let's <span class="italic">talk.</span></h1>
-      <p class="contact-sub" data-reveal data-reveal-delay="2">CTF collabs, internship leads, lab trades, or just a good Kerberos war story. Five open channels, pick whichever suits you.</p>
+      <p class="contact-sub" data-reveal data-reveal-delay="2">CTF collabs, internship leads, lab trades, or feedback on a writeup. Pick whichever channel suits you.</p>
 
       <div class="channels">
         <button class="channel" type="button" data-copy="Quetro" data-reveal>
           <div class="ch-head">
-            <span class="ch-key">01 / discord</span>
+            <span class="ch-key">discord</span>
             <span class="ch-action">Copy ⎘</span>
           </div>
           <div class="ch-val">Quetro</div>
@@ -20,34 +20,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <a class="channel" href="https://github.com/Certifa" target="_blank" rel="noopener" data-reveal data-reveal-delay="1">
           <div class="ch-head">
-            <span class="ch-key">02 / github</span>
+            <span class="ch-key">github</span>
             <span class="ch-action">Visit ↗</span>
           </div>
           <div class="ch-val">github.com/Certifa</div>
           <div class="ch-note">Where the tooling and writeups live.</div>
         </a>
 
-        <a class="channel" href="https://app.hackthebox.com/users/444744" target="_blank" rel="noopener" data-reveal>
+        <a class="channel" href="https://profile.hackthebox.com/profile/019c2f48-7b5d-73a8-b798-3ee811960672" target="_blank" rel="noopener" data-reveal>
           <div class="ch-head">
-            <span class="ch-key">03 / hackthebox</span>
+            <span class="ch-key">hackthebox</span>
             <span class="ch-action">Visit ↗</span>
           </div>
           <div class="ch-val">@certifa</div>
-          <div class="ch-note">Master rank · peak Pro Hacker. Catch me in the active lobby.</div>
+          <div class="ch-note">Master rank · peak Pro Hacker. 50+ machines pwned.</div>
         </a>
 
         <button class="channel" type="button" data-copy="mike@certifa.net" data-reveal data-reveal-delay="1">
           <div class="ch-head">
-            <span class="ch-key">04 / email</span>
+            <span class="ch-key">email</span>
             <span class="ch-action">Copy ⎘</span>
           </div>
           <div class="ch-val">mike@certifa.net</div>
-          <div class="ch-note">For long-form — teams, collabs, or walls of text.</div>
+          <div class="ch-note">For long-form: teams, collabs, or walls of text.</div>
         </button>
 
         <a class="channel" href="https://www.linkedin.com/in/mike-bliek-3b319a161/" target="_blank" rel="noopener" data-reveal>
           <div class="ch-head">
-            <span class="ch-key">05 / linkedin</span>
+            <span class="ch-key">linkedin</span>
             <span class="ch-action">Visit ↗</span>
           </div>
           <div class="ch-val">in/mike-bliek</div>
@@ -56,8 +56,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
 
       <div class="avail" data-reveal>
-        <div class="item"><span class="k">Status</span><span class="v ok">Accepting pings</span></div>
-        <div class="item"><span class="k">Response</span><span class="v">&lt; 24h · CET</span></div>
+        <div class="item"><span class="k">Status</span><span class="v ok">Open to messages</span></div>
+        <div class="item"><span class="k">Response</span><span class="v">Usually within a day · CET</span></div>
         <div class="item"><span class="k">Looking for</span><span class="v">CTF teams · internships</span></div>
       </div>
     </div>
@@ -174,13 +174,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: inline-flex; align-items: center; gap: 10px;
   }
   .avail .v.ok::before {
-    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    content: ''; width: 7px; height: 7px; border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.55; }
   }
 </style>

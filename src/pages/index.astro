@@ -21,11 +21,11 @@ const glyph = (s: string) => s[0].toUpperCase();
 const projects = [
   { icon: '⌘', name: 'AD Home Lab',         tag: 'infra',     desc: 'Server 2022 DC + 2 workstations. The same misconfigs I see on HTB, sitting in my apartment.', stack: ['WS22','Hyper-V','BloodHound'] },
   { icon: '↻', name: 'recon.py',            tag: 'tool',      desc: 'Python pipeline that wraps nmap, ffuf, gobuster, and crackmapexec into a single Markdown report.', stack: ['Python','asyncio','jinja2'] },
-  { icon: '▤', name: 'HTB Tracker',         tag: 'dashboard', desc: 'Personal dashboard tracking 50+ boxes — difficulty, time-to-root, recurring techniques, paths.', stack: ['JavaScript','GitHub Pages'] },
-  { icon: '◊', name: 'HackTheBox Profile',  tag: 'profile',   desc: 'Master rank · peak Pro Hacker · 50+ machines pwned across Easy → Insane.', stack: ['HTB','Pentesting','AD'] },
+  { icon: '▤', name: 'HTB Tracker',         tag: 'dashboard', desc: 'Personal dashboard tracking 50+ boxes: difficulty, time-to-root, recurring techniques, paths.', stack: ['JavaScript','GitHub Pages'] },
+  { icon: '◊', name: 'HackTheBox Profile',  tag: 'profile',   desc: 'The proving ground. Every writeup on this site started as a box here.', stack: ['HTB','Pentesting','AD'] },
 ];
 ---
-<BaseLayout title="Certifa" description="Offensive security student in Utrecht — HackTheBox writeups, Active Directory, web exploitation.">
+<BaseLayout title="Certifa" description="Offensive security student in Utrecht. HackTheBox writeups across Active Directory, Linux, and web.">
 
   <!-- HERO -->
   <section class="hm-hero">
@@ -33,12 +33,12 @@ const projects = [
     <div class="wrap">
       <div class="hm-hero-grid">
         <div class="hm-hero-text">
-          <div class="hm-greet" data-reveal><span class="dot"></span>Available for collaboration</div>
+          <div class="hm-greet" data-reveal><span class="dot"></span>Open to internships &amp; CTF teams</div>
           <h1 class="hm-name" data-reveal data-reveal-delay="1">
             Hi, I'm <span class="accent">Certifa.</span>
           </h1>
           <p class="hm-tag" data-reveal data-reveal-delay="2">
-            Offensive security student in Utrecht. I take things apart on <span class="em">HackTheBox</span>, study how attackers move through <span class="em">Active Directory</span>, and write down what I learn.
+            Offensive security student in Utrecht. I take things apart on <span class="em">HackTheBox</span>, from Active Directory to Linux to web, and write down what I learn.
           </p>
           <div class="hm-cta" data-reveal data-reveal-delay="3">
             <a class="hm-btn primary" href="/writeups/">Read writeups <span class="ar">→</span></a>
@@ -48,8 +48,8 @@ const projects = [
           <div class="hm-quickstats" data-reveal data-reveal-delay="3">
             <div class="qs"><span class="v">50+</span><span class="k">HTB boxes</span></div>
             <div class="qs"><span class="v">Master</span><span class="k">HTB rank</span></div>
-            <div class="qs"><span class="v italic">Pro Hacker</span><span class="k">peak</span></div>
-            <div class="qs"><span class="v">24</span><span class="k">y/o · NL</span></div>
+            <div class="qs"><span class="v">Pro Hacker</span><span class="k">peak rank</span></div>
+            <div class="qs"><span class="v">{sorted.length}</span><span class="k">writeups</span></div>
           </div>
         </div>
 
@@ -57,8 +57,8 @@ const projects = [
         <div class="hm-term" data-reveal data-reveal-delay="2">
           <div class="hm-term-head">
             <div class="tdots"><span></span><span></span><span></span></div>
-            <div class="ttitle">~/certifa — zsh</div>
-            <div class="tbadge">live</div>
+            <div class="ttitle">~/certifa · zsh</div>
+            <div class="tbadge">utc+1</div>
           </div>
           <div class="hm-term-body">
             <div class="hm-term-line"><span class="pr">$</span><span class="cmd">whoami</span></div>
@@ -81,8 +81,8 @@ const projects = [
             <div class="hm-term-line"><span class="pr">$</span><span class="cmd" id="hmTermLine2"></span><span class="cursor"></span></div>
             <div class="hm-term-comment" id="hmTermComment" style="margin-top: 8px;"># <span class="typed" id="hmTermCommentText"></span></div>
             <div class="hm-term-foot">
-              <span class="live">session active</span>
-              <span>uptime · 2h 14m</span>
+              <span>utrecht · nl</span>
+              <span>parrot · tmux · vim</span>
             </div>
           </div>
         </div>
@@ -96,8 +96,8 @@ const projects = [
       <div class="wrap">
         <div class="hm-sec-head" data-reveal>
           <div>
-            <h2 class="hm-sec-title">Recent <span class="accent">writeups.</span></h2>
-            <div class="hm-sec-meta" style="margin-top: 6px;">// retired HTB machines · post-flag analysis</div>
+            <h2 class="hm-sec-title">Recent writeups</h2>
+            <div class="hm-sec-meta" style="margin-top: 6px;">// retired HTB machines only</div>
           </div>
           <a class="hm-sec-link" href="/writeups/">All {sorted.length} writeups <span class="ar">→</span></a>
         </div>
@@ -150,7 +150,7 @@ const projects = [
     <div class="wrap">
       <div class="hm-sec-head" data-reveal>
         <div>
-          <h2 class="hm-sec-title">Things I've <span class="accent">built.</span></h2>
+          <h2 class="hm-sec-title">Things I've built</h2>
           <div class="hm-sec-meta" style="margin-top: 6px;">// labs, tools, dashboards</div>
         </div>
         <a class="hm-sec-link" href="/projects/">All projects <span class="ar">→</span></a>
@@ -176,16 +176,16 @@ const projects = [
     <div class="wrap">
       <div class="hm-sec-head" data-reveal>
         <div>
-          <h2 class="hm-sec-title">A bit <span class="accent">about me.</span></h2>
+          <h2 class="hm-sec-title">A bit about me</h2>
           <div class="hm-sec-meta" style="margin-top: 6px;">// the short version</div>
         </div>
         <a class="hm-sec-link" href="/about/">Full about <span class="ar">→</span></a>
       </div>
       <div class="hm-about-grid">
         <div class="hm-about-text" data-reveal>
-          <p>I'm a 24-year-old offensive security student at <strong>Hogeschool Utrecht</strong>, major <strong>Cybersecurity &amp; Cloud</strong>. My playground is HackTheBox — <strong>50+ machines</strong> across Easy → Insane, ranked Master with a peak of Pro Hacker.</p>
-          <p>I lean into the <em>Windows</em> side: Kerberos abuse, BloodHound, NTLM relay, certificate services. On Linux, privesc through weak services and SUID chains. On the web, Burp as a scalpel — not a shotgun.</p>
-          <p>Currently studying CCNA — the best attackers actually understand the network they're living in.</p>
+          <p>I'm 24, studying <strong>Cybersecurity &amp; Cloud</strong> at <strong>Hogeschool Utrecht</strong>. Most of my free time goes into HackTheBox. The writeups on this site are the boxes that taught me something worth keeping.</p>
+          <p>Comfortable across the stack: Kerberos abuse and BloodHound paths in <strong>AD</strong>, weak services and SUID chains on <strong>Linux</strong>, chained logic bugs on the <strong>web</strong>. What interests me is how a few small misconfigs add up to a shell.</p>
+          <p>Right now that means CCNA, with CJCA and CPTS lined up after.</p>
           <a class="more" href="/about/">Read more <span class="ar">→</span></a>
         </div>
         <div class="hm-heatmap" data-reveal data-reveal-delay="1">
@@ -217,12 +217,12 @@ const projects = [
     <div class="wrap">
       <div class="hm-contact-card" data-reveal>
         <div>
-          <h3 class="hm-contact-title">Working on something <span class="it">interesting?</span></h3>
-          <p class="hm-contact-sub">CTF teams, internships, lab trades, or just a good Kerberos war story — I'm easy to find. Pick a channel.</p>
+          <h3 class="hm-contact-title">Working on something interesting?</h3>
+          <p class="hm-contact-sub">CTF teams, internship leads, lab trades, or feedback on a writeup. Pick a channel, they all reach me.</p>
           <div class="hm-contact-channels">
             <a href="mailto:mike@certifa.net"><span class="ic">✉</span>mike@certifa.net</a>
             <a href="https://github.com/Certifa" target="_blank" rel="noopener"><span class="ic">↗</span>github/Certifa</a>
-            <a href="https://app.hackthebox.com/users/444744" target="_blank" rel="noopener"><span class="ic">⬢</span>hackthebox</a>
+            <a href="https://profile.hackthebox.com/profile/019c2f48-7b5d-73a8-b798-3ee811960672" target="_blank" rel="noopener"><span class="ic">⬢</span>hackthebox</a>
             <a href="https://www.linkedin.com/in/mike-bliek-3b319a161/" target="_blank" rel="noopener"><span class="ic">in</span>linkedin</a>
             <button class="ch-copy" data-copy="Quetro" type="button"><span class="ic">◇</span>discord · Quetro</button>
           </div>
@@ -234,7 +234,7 @@ const projects = [
           </div>
           <div class="field">
             <label for="hmMsg">one line</label>
-            <textarea id="hmMsg" name="message" required minlength="3" placeholder="hey certifa — i'm working on…"></textarea>
+            <textarea id="hmMsg" name="message" required minlength="3" placeholder="hey certifa, i'm working on…"></textarea>
           </div>
           <div class="hm-honeypot" aria-hidden="true">
             <label for="hmBotcheck">Don't fill this in</label>
@@ -310,14 +310,8 @@ const projects = [
     width: max-content;
   }
   .hm-greet .dot {
-    width: 7px; height: 7px; border-radius: 50%;
+    width: 6px; height: 6px; border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
-    animation: hm-pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes hm-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
-    50%      { box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 8%, transparent); }
   }
   .hm-name {
     font-family: 'Geist', sans-serif;
@@ -384,11 +378,6 @@ const projects = [
     color: var(--fg);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
-  }
-  .hm-quickstats .qs .v.italic {
-    font-family: 'Instrument Serif', serif;
-    font-style: italic; font-weight: 400;
-    color: var(--accent);
   }
   .hm-quickstats .qs .k {
     font-family: 'JetBrains Mono', monospace;
@@ -460,13 +449,6 @@ const projects = [
     display: flex; justify-content: space-between;
     color: var(--fg-3); font-size: 10.5px; letter-spacing: 0.05em;
   }
-  .hm-term-foot .live { display: inline-flex; align-items: center; gap: 6px; }
-  .hm-term-foot .live::before {
-    content: ''; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
-    animation: hm-pulse 2.4s ease-in-out infinite;
-  }
 
   /* SECTION HEADERS */
   .hm-sec { padding: 64px 0; border-top: 1px solid var(--line); }
@@ -480,11 +462,6 @@ const projects = [
     font-weight: 500;
     letter-spacing: -0.025em;
     color: var(--fg);
-  }
-  .hm-sec-title .accent {
-    font-family: 'Instrument Serif', serif;
-    font-weight: 400; font-style: italic;
-    color: var(--accent);
   }
   .hm-sec-meta {
     font-family: 'JetBrains Mono', monospace;
@@ -691,11 +668,6 @@ const projects = [
   .hm-about-text p { margin-bottom: 14px; }
   .hm-about-text p:last-of-type { margin-bottom: 0; }
   .hm-about-text strong { color: var(--fg); font-weight: 500; }
-  .hm-about-text em {
-    font-family: 'Instrument Serif', serif;
-    font-style: italic; font-weight: 400;
-    color: var(--accent); font-size: 1.05em;
-  }
   .hm-about-text .more {
     margin-top: 18px;
     display: inline-flex; align-items: center; gap: 6px;
@@ -775,11 +747,6 @@ const projects = [
     font-size: clamp(26px, 3vw, 36px);
     font-weight: 500; letter-spacing: -0.02em;
     color: var(--fg); margin-bottom: 10px; line-height: 1.15;
-  }
-  .hm-contact-title .it {
-    font-family: 'Instrument Serif', serif;
-    font-style: italic; font-weight: 400;
-    color: var(--accent);
   }
   .hm-contact-sub { font-size: 15px; color: var(--fg-2); line-height: 1.55; max-width: 50ch; margin-bottom: 18px; }
   .hm-contact-channels { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -906,11 +873,9 @@ const projects = [
     const cmt   = document.getElementById('hmTermCommentText');
     if (!line2 || !cmt) return;
     const pairs: [string, string][] = [
-      ['cat principles.md',     'move quietly, learn everything, write it down'],
-      ['history | grep rooted', 'the lesson lives in the explanation, not the flag'],
-      ['echo $WHY',             'because three quiet misconfigs are still a chain'],
-      ['ls ~/learning',         'always one box behind where i want to be'],
-      ['date +%status',         'studying CCNA · grinding · curious'],
+      ['cat now.txt',   'studying CCNA · grinding toward 100 boxes'],
+      ['ls ~/writeups', 'retired machines only, written up after the flag'],
+      ['echo $NEXT',    'CJCA, then CPTS'],
     ];
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       line2.textContent = pairs[0][0];
@@ -969,7 +934,7 @@ const projects = [
       btn!.innerHTML = on ? 'Sending<span class="ar">…</span>' : 'Send <span class="ar">→</span>';
     };
     const showSuccess = () => {
-      form!.innerHTML = '<div class="hm-form-success">Got it — I\'ll get back to you.</div>';
+      form!.innerHTML = '<div class="hm-form-success">Got it. I\'ll get back to you.</div>';
     };
 
     async function send() {
@@ -987,7 +952,7 @@ const projects = [
         return;
       }
       if (msgVal.length < 3) {
-        showError('Message is too short — at least 3 characters.');
+        showError('Message needs at least 3 characters.');
         msg!.focus();
         return;
       }
@@ -1004,11 +969,11 @@ const projects = [
           showSuccess();
         } else {
           setSubmitting(false);
-          showError("Something didn't go through — try again, or email me directly.");
+          showError("Something didn't go through. Try again, or email me directly.");
         }
       } catch {
         setSubmitting(false);
-        showError("Couldn't reach the server — check your connection and try again.");
+        showError("Couldn't reach the server. Check your connection and try again.");
       }
     }
 

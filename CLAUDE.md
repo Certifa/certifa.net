@@ -1,32 +1,37 @@
-# Certifa.github.io — Portfolio & Writeup Hub
+# Certifa — Portfolio & Writeup Hub
 
 ## Project Overview
 
-Multi-page portfolio and writeup site for Mike (Certifa) — cybersecurity student and pentester. Dark, cyber, professional aesthetic. The shell pages (home, about, skills, projects) get the visual flair. Writeup pages prioritize clean readability. Hosted on GitHub Pages via Astro static output.
+Multi-page portfolio and writeup site for Mike (Certifa), an offensive security student and pentester. Dark, monochrome, professional aesthetic. Shell pages (home, about, projects, contact) carry the visual flair; writeup pages stay clean for reading. Built with Astro static output, deployed to **certifa.net** (custom domain) via GitHub Pages.
 
 ## Tech Stack
 
 | Layer | Tech | Notes |
 |---|---|---|
-| **Framework** | Astro | Static site generator, markdown-native, islands architecture |
-| **Styling** | Tailwind CSS | `npx astro add tailwind`, utility-first, mobile-first |
-| **3D / Visual** | Three.js | Home page hero ONLY — do not load on other pages |
-| **Animations** | CSS + Intersection Observer | Scroll reveals, hover effects, no heavy JS animation libs |
-| **Content** | Astro Content Collections | Markdown writeups with frontmatter → auto-generated pages |
-| **Code Highlighting** | Shiki (built into Astro) | Syntax highlighting in writeup code blocks |
-| **Fonts** | Google Fonts | Space Mono (mono) + Outfit (sans) |
-| **Deployment** | GitHub Actions → GitHub Pages | Auto-deploy on push to main |
+| **Framework** | Astro 5 | Static output, markdown-native, zero-JS by default |
+| **Styling** | Tailwind (`@astrojs/tailwind`) + scoped CSS | Mostly per-component scoped styles + CSS custom properties in `global.css`; Tailwind available but used lightly |
+| **Animations** | CSS + IntersectionObserver | Scroll-reveal fade-ups, hover lifts. No JS animation libraries |
+| **Content** | Astro Content Collections | Markdown writeups with frontmatter become pages |
+| **Code Highlighting** | Shiki (build-time) | `github-dark` theme, `wrap: true` |
+| **Diagrams** | Mermaid (client-side) | Loaded from CDN in `WriteupLayout`, only when a writeup contains a `mermaid` code block |
+| **Fonts** | Google Fonts | Geist (sans), JetBrains Mono (mono), Instrument Serif (page-title accent only) |
+| **Contact form** | Cloudflare Worker | Home + contact forms POST to `forms.certifa.net` |
+| **Deployment** | GitHub Actions → GitHub Pages | Auto-deploy on push to `main`; CNAME → certifa.net |
+
+**No Three.js.** The home hero uses a pure-CSS animated dot-grid background, not WebGL. Do not add Three.js.
 
 ## Site Structure
 
 ```
-/                    → Home (hero + featured writeups + skills preview)
-/about               → Bio, stats, journey timeline
-/projects            → Project showcase grid
-/writeups            → Writeup listing with filters
+/                    → Home (hero + terminal card + recent writeups + projects + about strip + heatmap + contact)
+/about               → Bio + fact sidebar + focus-area grid
+/projects            → Featured rows + project grid
+/writeups            → Writeup listing with difficulty/featured filters
 /writeups/[slug]     → Individual writeup (rendered from markdown)
-/skills              → Interactive tools/arsenal page
+/contact             → Contact channels + availability
 ```
+
+There is **no** `/skills` page.
 
 ## Astro Project Structure
 
@@ -34,44 +39,41 @@ Multi-page portfolio and writeup site for Mike (Certifa) — cybersecurity stude
 certifa.github.io/
 ├── src/
 │   ├── layouts/
-│   │   ├── BaseLayout.astro      ← HTML shell, nav, footer, noise overlay, meta tags
-│   │   ├── PageLayout.astro      ← Standard page with section hero header
-│   │   └── WriteupLayout.astro   ← Clean reading layout, TOC sidebar, prev/next nav
+│   │   ├── BaseLayout.astro      ← HTML shell, nav, footer, noise overlay, meta/OG tags, scroll-reveal + copy-to-clipboard scripts
+│   │   └── WriteupLayout.astro   ← Clean reading layout: header meta, TOC sidebar, copy buttons, active-heading tracking, Mermaid
 │   ├── components/
-│   │   ├── Nav.astro             ← Sticky blur nav, active page, mobile hamburger
-│   │   ├── Footer.astro
-│   │   ├── Hero.astro            ← Home hero with Three.js background
-│   │   ├── ThreeBackground.astro ← Three.js island (client:only or client:load)
-│   │   ├── ProjectCard.astro
-│   │   ├── WriteupCard.astro     ← Card for writeup listing (title, date, difficulty, tags)
-│   │   ├── SkillGrid.astro
-│   │   ├── Timeline.astro
-│   │   └── TableOfContents.astro ← Sticky sidebar TOC for writeup pages
+│   │   ├── Nav.astro             ← Sticky blur nav, active page, mobile hamburger, brand logo (C-with-wink)
+│   │   └── Footer.astro
 │   ├── content/
 │   │   ├── config.ts             ← Content collection schema (writeups)
-│   │   └── writeups/             ← Drop .md files here, they become pages
-│   │       └── example-box.md
+│   │   └── writeups/             ← Drop .md files here; they become pages
 │   ├── pages/
-│   │   ├── index.astro
+│   │   ├── index.astro           ← Home (all sections + inline styles + client scripts)
 │   │   ├── about.astro
 │   │   ├── projects.astro
-│   │   ├── skills.astro
+│   │   ├── contact.astro
 │   │   └── writeups/
-│   │       ├── index.astro       ← Listing page with filters/search
-│   │       └── [...slug].astro   ← Dynamic route for individual writeups
+│   │       ├── index.astro       ← Listing with filter chips
+│   │       └── [...slug].astro   ← Dynamic route; computes reading time, passes to WriteupLayout
 │   └── styles/
-│       └── global.css            ← CSS custom properties, base styles, prose styling
+│       └── global.css            ← Theme tokens, base styles, shared pills/tags, writeup prose, TOC
 ├── public/
-│   └── images/
+│   ├── images/writeups/<box>/    ← Writeup screenshots
+│   ├── data/heatmap.json         ← Real HTB activity feeding the home heatmap
+│   ├── favicon.svg
+│   ├── og-v2.png                 ← Social share card
+│   └── CNAME                     ← certifa.net
 ├── astro.config.mjs
 ├── tailwind.config.cjs
 ├── tsconfig.json
 └── package.json
 ```
 
+Page styles live in `<style>` blocks inside each `.astro` file (scoped). Only cross-page primitives (pills, tags, buttons, writeup prose, TOC, page-head) live in `global.css`.
+
 ## Writeup Content System
 
-### Frontmatter schema for writeups:
+### Frontmatter schema:
 ```yaml
 ---
 title: "Box Name"
@@ -104,126 +106,110 @@ const writeups = defineCollection({
 export const collections = { writeups };
 ```
 
-### Writeup page features:
-- Table of contents generated from headings (sticky sidebar desktop, collapsible mobile)
-- Syntax-highlighted code blocks with copy button
-- Reading time estimate
-- Difficulty badge + platform tag + date
-- Prev/next writeup navigation
-- Tags as clickable filter links back to listing
+### Writeup page features (WriteupLayout):
+- Table of contents from H2/H3 headings (sticky sidebar on desktop, collapsible drawer on mobile)
+- Copy button on every code block
+- Reading-time estimate (computed in `[...slug].astro`)
+- Difficulty badge + platform + date + tags in the header
+- "Back to writeups" links (top and bottom). No prev/next navigation currently
+- Active-heading highlight in the TOC via IntersectionObserver
+- Wide tables wrapped for horizontal scroll; Mermaid diagrams rendered client-side
 
-### Writeup listing page features:
-- Filter by platform, difficulty, tags
-- Search by title/description
-- Sort by date (newest first default)
-- Grid layout with WriteupCard components
+### Writeup listing (writeups/index.astro):
+- Filter chips: All / Easy / Medium / Hard / Insane / Featured (chips only appear when that count > 0)
+- Sorted by date, newest first
+- Row list (not cards); numbers renumber when filtered. No free-text search
 
 ## Design Direction
 
 ### Aesthetic
-- **Dark-first** — deep blacks (#06060e, #0a0a0f) with cyan and purple accents
-- **Terminal/cyber** — monospace labels, `// section-label` style headings, blinking cursor touches
-- **Professional, not edgy** — clean layout, readable type, generous whitespace
-- **Two modes**: shell pages get visual flair, writeup pages stay clean for reading
+- **Dark, near-black monochrome** (`#0a0a0a` base) with a **single sky-blue accent**. No cyan/purple, no multi-color neon.
+- **Restrained terminal touches**: mono `// section-label` metas, a typing terminal card on the home hero, a blinking cursor. Kept subtle, not edgy.
+- **Two modes**: shell pages get flair (animated hero background, hover lifts); writeup pages stay clean for reading.
+- **Serif is rationed**: Instrument Serif italic appears only in the accent word of a page title, at most once per page. Do not sprinkle it across section headings or body copy.
 
-### Color Palette
+### Color Palette (from global.css)
 ```css
 :root {
-  --bg: #06060e;
-  --bg-card: rgba(14, 14, 28, 0.7);
-  --text: #c8cad0;
-  --text-bright: #eaedf3;
-  --text-dim: #555a6e;
-  --accent: #00e5ff;
-  --accent-glow: rgba(0, 229, 255, 0.15);
-  --accent2: #8b5cf6;
-  --green: #22d37e;
-  --border: rgba(255, 255, 255, 0.06);
+  --bg:      #0a0a0a;
+  --bg-2:    #111111;
+  --bg-3:    #161616;
+  --line:    #1f1f1f;
+  --line-2:  #2a2a2a;
+  --fg:      #ededed;
+  --fg-2:    #a0a0a0;
+  --fg-3:    #6b6b6b;
+  --fg-4:    #4a4a4a;
+  --accent:   oklch(0.82 0.12 220);  /* sky */
+  --accent-2: oklch(0.65 0.12 220);
+  --warn:     oklch(0.78 0.13 40);
 }
 ```
 
 ### Typography
-- **Monospace**: Space Mono — nav, labels, section tags, code, dates
-- **Sans-serif**: Outfit — body text, descriptions, headings
-- **Writeup prose**: Outfit at 18px, 1.8 line height, max-width 750px
+- **Sans (Geist)**: headings, body, descriptions, buttons.
+- **Mono (JetBrains Mono)**: nav-adjacent labels, section metas, code, dates, badges.
+- **Serif (Instrument Serif, italic)**: page-title accent word only.
+- **Writeup prose**: Geist at 17px, 1.8 line height, max-width 760px.
 
-### Visual Effects (shell pages only)
-- Noise/grain overlay (SVG filter, fixed, pointer-events: none)
-- Subtle scanlines (repeating-linear-gradient)
-- Cursor glow following mouse (desktop only)
-- Card hover: translateY(-4px), gradient top border reveal, glow shadow
-- Scroll-triggered fade-up reveals via IntersectionObserver
+### Visual Effects
+- Subtle SVG noise overlay (fixed, `pointer-events: none`, ~3.5% opacity).
+- Scroll-triggered fade-up reveals via IntersectionObserver (`[data-reveal]`).
+- Card hover: slight `translateY` lift, border/background shift.
+- Home hero: CSS animated dot-grid + a single falling accent line.
+- **No** scanlines, **no** cursor glow, **no** pulsing status dots (status dots are static).
 
 ### Writeup Page Styling
-- Minimal — no noise, no scanlines, no cursor glow
-- Clean prose styling via Tailwind Typography or custom prose classes
-- Code blocks: dark bg matching site theme, Shiki theme "github-dark" or similar
-- Clear heading hierarchy with visual weight
+- Minimal: no noise-heavy chrome, no hero flair.
+- Custom prose classes in `global.css` (`.prose-writeup`).
+- Code blocks: Shiki `github-dark`, dark bg matching the theme.
+- Emphasis (`em`) renders as plain italic in body color, not serif/accent.
 
 ## Responsive Design — MANDATORY
 
-- **Mobile-first** — design for 375px, then scale up
-- Breakpoints: 375px, 768px, 1024px, 1440px
-- Touch-friendly targets (min 44px)
-- Three.js: reduce particle count on mobile, disable cursor glow
-- Nav: hamburger with slide-in on mobile
-- Writeup TOC: collapsible drawer on mobile, sticky sidebar on desktop
+- **Mobile-first**: design for 375px, then scale up.
+- Breakpoints roughly: 600–640px, 768px, 900–1000px, 1200px.
+- Touch targets min 44px; inputs use 16px font on mobile to stop iOS zoom.
+- Nav collapses to a hamburger drawer under ~860px.
+- Writeup TOC: collapsible drawer on mobile, sticky sidebar on desktop.
 
 ## Performance Rules
 
-- Three.js loaded ONLY on home page (Astro client:only directive)
-- Lazy-load images: `loading="lazy"`
-- Astro zero-JS by default — only add client directives where needed
-- Shiki syntax highlighting at build time, not client-side
-- Lighthouse performance > 90, accessibility > 90
-- Page weight: < 3MB writeup pages, < 5MB home
+- Astro zero-JS by default; add client scripts only where needed (home interactions, writeup TOC/copy, Mermaid).
+- Mermaid is imported from CDN only when a writeup actually contains a diagram.
+- Lazy-load images where practical.
+- Shiki highlighting at build time, not client-side.
+- Keep only the fonts in use in the Google Fonts request (Geist, JetBrains Mono, Instrument Serif).
 
-## GitHub Pages Deployment
+## Deployment
 
-### astro.config.mjs:
-```javascript
-import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
+`astro.config.mjs` sets `site: 'https://certifa.net'`, `output: 'static'`, the Tailwind integration, and Shiki `github-dark` with `wrap: true`. GitHub Actions auto-deploys on push to `main`; `public/CNAME` maps the Pages site to certifa.net. **Pushing to `main` deploys immediately — only push when asked.**
 
-export default defineConfig({
-  site: 'https://certifa.github.io',
-  integrations: [tailwind()],
-  output: 'static',
-  markdown: {
-    shikiConfig: {
-      theme: 'github-dark',
-    },
-  },
-});
-```
-
-### GitHub Actions: auto-deploy on push to main using withastro/action@v3.
+Local preview: `npm run dev` (serves at localhost:4321). Node/npm are installed on this machine.
 
 ## Code Standards
 
-- Astro components (.astro) with scoped styles
-- Semantic HTML5 throughout
-- CSS custom properties for theme values in global.css
-- Tailwind for layout/spacing, custom CSS for complex effects
-- TypeScript for content collection config
-- Comment Three.js setup and complex animations for learning
-- No jQuery, no unnecessary dependencies
+- Astro components with scoped styles; shared primitives in `global.css`.
+- Semantic HTML5; CSS custom properties for all theme values.
+- TypeScript for the content collection config and inline scripts.
+- No jQuery, no heavy animation libraries, no unnecessary dependencies.
 
 ## Content Tone
 
-- First person, confident but not arrogant
-- Technical but accessible — recruiters AND hackers should get it
-- Short sentences, active voice
-- English (Dutch speaker)
+- First person, confident but not arrogant.
+- Technical but accessible: recruiters and hackers should both get it.
+- Short sentences, active voice. English (Mike is a Dutch speaker).
+- **Active Directory, Linux, and web are presented as three equal focus areas.** Do not frame the work as Windows/AD-only.
+- **No fabricated liveness** (no fake uptime, "session active", live counters, or response-time promises). Derive any numbers from real data, e.g. writeup count from the content collection.
+- **At most one clever/quippy line per page**; everything else plain and specific.
+- **No em dashes (—).** They read as AI. Use a colon for label/heading/caption cases, a comma for mid-sentence pauses, a period where a full stop reads better, and → for arrows.
 
 ## What NOT to Do
 
-- No templates or template-looking designs
-- No AI slop (purple gradients on white, Inter/Roboto everywhere)
-- No excessive neon glow hurting readability
-- No autoplaying sounds or video
-- No Lorem ipsum — real or realistic content always
-- No client-side JS where Astro handles it at build time
-- No Three.js on writeup pages
-- No heavy animation libraries — CSS + IntersectionObserver are enough
-- No cookie banners or popups
+- No Three.js (the hero is CSS).
+- No templates or template-looking designs; no AI-slop tells (serif-accent-word on every heading, pulsing "available" dots, decorative 01/02/03 numbering on non-sequences, fake terminal liveness).
+- No excessive glow hurting readability.
+- No autoplaying sound or video.
+- No Lorem ipsum; real or realistic content always.
+- No client-side JS where Astro handles it at build time.
+- No cookie banners or popups.
