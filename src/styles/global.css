@@ -15,8 +15,8 @@
   --fg-2:      #a0a0a0;
   --fg-3:      #6b6b6b;
   --fg-4:      #4a4a4a;
-  --accent:    oklch(0.82 0.12 220);   /* sky */
-  --accent-2:  oklch(0.65 0.12 220);
+  --accent:    oklch(0.74 0.15 248);   /* electric azure */
+  --accent-2:  oklch(0.62 0.15 248);
   --warn:      oklch(0.78 0.13 40);
 }
 

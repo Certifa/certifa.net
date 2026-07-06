@@ -12,10 +12,10 @@ featured: false
   <div class="locked-glow"></div>
 
   <svg class="locked-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="12" y="28" width="40" height="28" rx="4" stroke="#00e5ff" stroke-width="2.5"/>
-    <path d="M20 28V20a12 12 0 0 1 24 0v8" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round"/>
-    <circle cx="32" cy="42" r="4" fill="#00e5ff" opacity="0.9"/>
-    <line x1="32" y1="46" x2="32" y2="51" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="12" y="28" width="40" height="28" rx="4" stroke="#3d8cff" stroke-width="2.5"/>
+    <path d="M20 28V20a12 12 0 0 1 24 0v8" stroke="#3d8cff" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="32" cy="42" r="4" fill="#3d8cff" opacity="0.9"/>
+    <line x1="32" y1="46" x2="32" y2="51" stroke="#3d8cff" stroke-width="2.5" stroke-linecap="round"/>
   </svg>
 
   <span class="locked-label">// access restricted</span>
@@ -67,7 +67,7 @@ featured: false
 .locked-label {
   font-family: 'Space Mono', monospace;
   font-size: 0.7rem;
-  color: #00e5ff;
+  color: #3d8cff;
   letter-spacing: 0.15em;
   text-transform: lowercase;
   margin-bottom: 0.75rem;
@@ -91,12 +91,12 @@ featured: false
   margin: 0 0 1.5rem;
 }
 .locked-body a {
-  color: #00e5ff;
+  color: #3d8cff;
   text-decoration: none;
   border-bottom: 1px solid rgba(0, 229, 255, 0.3);
 }
 .locked-body a:hover {
-  border-bottom-color: #00e5ff;
+  border-bottom-color: #3d8cff;
 }
 .locked-hint {
   font-family: 'Space Mono', monospace;
