@@ -1,16 +1,25 @@
 import { OGImageRoute } from 'astro-og-canvas';
 import { getCollection } from 'astro:content';
+import { existsSync } from 'node:fs';
 
 // One OG card per writeup, keyed by slug -> /og/<slug>.png
 const entries = await getCollection('writeups');
 const pages = Object.fromEntries(entries.map((e) => [e.slug, e.data]));
 
+// Optional box avatar per writeup: public/og-avatars/<box>.png (slug minus "htb-").
+// Present -> shown at the top of the card. Missing -> text-only card, no error.
+const avatarFor = (slug: string): string | undefined => {
+  const p = `./public/og-avatars/${slug.replace(/^htb-/, '')}.png`;
+  return existsSync(p) ? p : undefined;
+};
+
 export const { getStaticPaths, GET } = await OGImageRoute({
   param: 'route',
   pages,
-  getImageOptions: (_path, page) => ({
+  getImageOptions: (path, page) => ({
     title: page.title,
     description: `${page.platform} · ${page.difficulty} · certifa.net`,
+    ...(avatarFor(path) ? { logo: { path: avatarFor(path)!, size: [120] as [number] } } : {}),
     bgGradient: [[17, 17, 17], [10, 10, 10]],
     border: { color: [83, 177, 255], width: 12, side: 'inline-start' },
     padding: 72,

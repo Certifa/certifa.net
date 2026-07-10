@@ -155,6 +155,8 @@ export const collections = { writeups };
 ### Social share images (OG)
 Each writeup gets its own Open Graph card generated at build by `src/pages/og/[...route].ts` (astro-og-canvas), served at `/og/<slug>.png` and set as that page's `og:image` via `WriteupLayout`. Cards are on-brand: dark gradient, azure edge, Bricolage Grotesque title, JetBrains Mono meta line (`platform · difficulty · certifa.net`). Fonts are vendored as static TTFs in `src/assets/og-fonts/` (needed at build; do not delete). `lineHeight` there is a multiplier, not pixels. Non-writeup pages keep the static `public/og-v2.png`.
 
+Optional per-box avatar: drop a square PNG at `public/og-avatars/<box>.png` (box = slug minus the `htb-` prefix, e.g. `shocker.png`). Present -> shown at the top of the card; missing -> text-only card, no error. Add one when a new box's avatar becomes available.
+
 ### Active-machine (locked) writeups
 HTB's streaming policy forbids publishing walkthroughs for machines that are still active. Boxes that aren't retired yet ship as a **locked notice** instead of a full writeup:
 - The markdown body is a single `<div class="wu-locked">…</div>` (kicker + heading + copy + a link to HTB's policy). No inline `<style>`, no per-file CSS.
