@@ -21,7 +21,29 @@ const words = entry.body
   .split(/\s+/)
   .filter(Boolean).length;
 const readingTime = Math.max(1, Math.ceil(words / 200));
+
+// Chronological neighbours (newest first) + related writeups by shared tags.
+const all = (await getCollection('writeups'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const idx = all.findIndex((w) => w.slug === entry.slug);
+const newer = idx > 0 ? all[idx - 1] : null;
+const older = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
+
+const related = all
+  .filter((w) => w.slug !== entry.slug)
+  .map((w) => ({ w, shared: w.data.tags.filter((t) => entry.data.tags.includes(t)).length }))
+  .filter((r) => r.shared > 0)
+  .sort((a, b) => b.shared - a.shared || b.w.data.date.valueOf() - a.w.data.date.valueOf())
+  .slice(0, 3)
+  .map((r) => r.w);
 ---
-<WriteupLayout entry={entry} headings={headings} readingTime={readingTime}>
+<WriteupLayout
+  entry={entry}
+  headings={headings}
+  readingTime={readingTime}
+  newer={newer}
+  older={older}
+  related={related}
+>
   <Content />
 </WriteupLayout>
