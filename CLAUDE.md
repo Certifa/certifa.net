@@ -29,7 +29,7 @@ This is a living project, improved continuously. The standing goal is "more beau
 | **Diagrams** | Mermaid (client-side) | Loaded from CDN in `WriteupLayout`, only when a writeup contains a `mermaid` code block |
 | **Fonts** | Google Fonts | Bricolage Grotesque (display headings), Geist (body/UI), JetBrains Mono (mono), Instrument Serif (page-title accent only) |
 | **Contact form** | Cloudflare Worker | Home + contact forms POST to `forms.certifa.net` (`localhost:8787` in dev) |
-| **Social cards** | astro-og-canvas | Per-writeup OG images generated at build (`/og/<slug>.png`); other pages use the static `og-v2.png` |
+| **Social cards** | CanvasKit (canvaskit-wasm) | Per-writeup OG images rendered at build (`/og/<slug>.png`); other pages use the static `og-v2.png` |
 | **Deployment** | GitHub Actions → GitHub Pages | Auto-deploy on push to `main`; `public/CNAME` → certifa.net |
 
 **No Three.js.** The home hero uses a pure-CSS animated dot-grid background, not WebGL. Do not add Three.js.
@@ -153,7 +153,7 @@ export const collections = { writeups };
 - Row list (not cards); numbers renumber when filtered. No free-text search
 
 ### Social share images (OG)
-Each writeup gets its own Open Graph card generated at build by `src/pages/og/[...route].ts` (astro-og-canvas), served at `/og/<slug>.png` and set as that page's `og:image` via `WriteupLayout`. Cards are on-brand: dark gradient, azure edge, Bricolage Grotesque title, JetBrains Mono meta line (`platform · difficulty · certifa.net`). Fonts are vendored as static TTFs in `src/assets/og-fonts/` (needed at build; do not delete). `lineHeight` there is a multiplier, not pixels. Non-writeup pages keep the static `public/og-v2.png`.
+Each writeup gets its own Open Graph card rendered at build by `src/pages/og/[...route].ts`, served at `/og/<slug>.png` and set as that page's `og:image` via `WriteupLayout`. The route draws the card directly with CanvasKit (`canvaskit-wasm`): dark gradient, azure left edge, box avatar on the left with the Bricolage Grotesque title and a JetBrains Mono meta line (`platform · difficulty · certifa.net`) beside it, the group vertically centred. No avatar -> the text sits at the left, still centred. Fonts are vendored as static TTFs in `src/assets/og-fonts/` (needed at build; do not delete). Non-writeup pages keep the static `public/og-v2.png`.
 
 Optional per-box avatar: drop a square PNG at `public/og-avatars/<box>.png` (box = slug minus the `htb-` prefix, e.g. `shocker.png`). Present -> shown at the top of the card; missing -> text-only card, no error. Add one when a new box's avatar becomes available.
 
