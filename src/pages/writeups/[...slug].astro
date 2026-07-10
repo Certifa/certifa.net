@@ -13,8 +13,14 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content, headings } = await entry.render();
 
-// Estimate reading time from raw body word count
-const readingTime = Math.max(1, Math.ceil(entry.body.split(/\s+/).length / 200));
+// Estimate reading time from the prose only. Strip HTML blocks (e.g. the
+// locked-writeup notice) so markup and inline styles don't inflate the count.
+const words = entry.body
+  .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+  .replace(/<[^>]+>/g, ' ')
+  .split(/\s+/)
+  .filter(Boolean).length;
+const readingTime = Math.max(1, Math.ceil(words / 200));
 ---
 <WriteupLayout entry={entry} headings={headings} readingTime={readingTime}>
   <Content />
