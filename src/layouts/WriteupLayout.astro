@@ -22,7 +22,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
 
 const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
-<BaseLayout title={title} description={description} isWriteup={true}>
+<BaseLayout title={title} description={description} image={`/og/${entry.slug}.png`} isWriteup={true}>
   <div class="wu-progress" id="wuProgress" aria-hidden="true"></div>
   <article class="wu-page">
     <div class="wrap">

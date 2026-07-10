@@ -29,6 +29,7 @@ This is a living project, improved continuously. The standing goal is "more beau
 | **Diagrams** | Mermaid (client-side) | Loaded from CDN in `WriteupLayout`, only when a writeup contains a `mermaid` code block |
 | **Fonts** | Google Fonts | Bricolage Grotesque (display headings), Geist (body/UI), JetBrains Mono (mono), Instrument Serif (page-title accent only) |
 | **Contact form** | Cloudflare Worker | Home + contact forms POST to `forms.certifa.net` (`localhost:8787` in dev) |
+| **Social cards** | astro-og-canvas | Per-writeup OG images generated at build (`/og/<slug>.png`); other pages use the static `og-v2.png` |
 | **Deployment** | GitHub Actions → GitHub Pages | Auto-deploy on push to `main`; `public/CNAME` → certifa.net |
 
 **No Three.js.** The home hero uses a pure-CSS animated dot-grid background, not WebGL. Do not add Three.js.
@@ -150,6 +151,9 @@ export const collections = { writeups };
 - Filter chips: All / Easy / Medium / Hard / Insane / Featured (chips only appear when that count > 0)
 - Sorted by date, newest first
 - Row list (not cards); numbers renumber when filtered. No free-text search
+
+### Social share images (OG)
+Each writeup gets its own Open Graph card generated at build by `src/pages/og/[...route].ts` (astro-og-canvas), served at `/og/<slug>.png` and set as that page's `og:image` via `WriteupLayout`. Cards are on-brand: dark gradient, azure edge, Bricolage Grotesque title, JetBrains Mono meta line (`platform · difficulty · certifa.net`). Fonts are vendored as static TTFs in `src/assets/og-fonts/` (needed at build; do not delete). `lineHeight` there is a multiplier, not pixels. Non-writeup pages keep the static `public/og-v2.png`.
 
 ### Active-machine (locked) writeups
 HTB's streaming policy forbids publishing walkthroughs for machines that are still active. Boxes that aren't retired yet ship as a **locked notice** instead of a full writeup:
