@@ -28,14 +28,26 @@ const counts = {
 
   <section class="wu-list">
     <div class="wrap">
-      <div class="wu-controls" data-reveal>
-        <button class="chip active" data-filter="all">All · {counts.all}</button>
-        {counts.easy   > 0 && <button class="chip" data-filter="easy">Easy · {counts.easy}</button>}
-        {counts.medium > 0 && <button class="chip" data-filter="medium">Medium · {counts.medium}</button>}
-        {counts.hard   > 0 && <button class="chip" data-filter="hard">Hard · {counts.hard}</button>}
-        {counts.insane > 0 && <button class="chip" data-filter="insane">Insane · {counts.insane}</button>}
-        {counts.featured > 0 && <button class="chip" data-filter="featured">Featured · {counts.featured}</button>}
+      <div class="wu-toolbar" data-reveal>
+        <input
+          id="wuSearch"
+          class="wu-search"
+          type="search"
+          placeholder="Search title, tag, or technique…"
+          aria-label="Search writeups"
+          autocomplete="off"
+        />
+        <div class="wu-controls">
+          <button class="chip active" data-filter="all">All · {counts.all}</button>
+          {counts.easy   > 0 && <button class="chip" data-filter="easy">Easy · {counts.easy}</button>}
+          {counts.medium > 0 && <button class="chip" data-filter="medium">Medium · {counts.medium}</button>}
+          {counts.hard   > 0 && <button class="chip" data-filter="hard">Hard · {counts.hard}</button>}
+          {counts.insane > 0 && <button class="chip" data-filter="insane">Insane · {counts.insane}</button>}
+          {counts.featured > 0 && <button class="chip" data-filter="featured">Featured · {counts.featured}</button>}
+        </div>
       </div>
+
+      <p class="wu-empty" id="wuEmpty" hidden>No writeups match that. <button type="button" id="wuReset">Clear filters</button></p>
 
       <div class="wu-items" id="wuItems">
         {sorted.map((w, i) => (
@@ -44,6 +56,7 @@ const counts = {
             href={`/writeups/${w.slug}/`}
             data-difficulty={w.data.difficulty}
             data-featured={w.data.featured ? 'true' : 'false'}
+            data-search={`${w.data.title} ${w.data.description} ${w.data.tags.join(' ')}`.toLowerCase()}
           >
             <div class="wu-num">{String(i + 1).padStart(2, '0')}</div>
             <div class="wu-main">
@@ -73,7 +86,35 @@ const counts = {
   @media (max-width: 768px) { .wrap { padding: 0 20px; } }
 
   .wu-list { padding: 72px 0 120px; }
-  .wu-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+  .wu-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 32px;
+  }
+  .wu-search {
+    flex: 1; min-width: 220px;
+    font-family: 'Geist', sans-serif;
+    font-size: 14px; color: var(--fg);
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    border-radius: 999px;
+    padding: 10px 16px;
+    outline: none;
+    transition: border-color .18s ease, background .18s ease;
+  }
+  .wu-search::placeholder { color: var(--fg-3); }
+  .wu-search:focus { border-color: color-mix(in srgb, var(--accent) 60%, var(--line-2)); background: var(--bg-3); }
+  @media (max-width: 768px) { .wu-search { font-size: 16px; } }
+  .wu-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .wu-empty {
+    color: var(--fg-2); font-size: 15px;
+    padding: 40px 0; text-align: center;
+  }
+  .wu-empty button {
+    background: none; border: 0; padding: 0;
+    color: var(--accent); cursor: pointer;
+    font: inherit; text-decoration: underline;
+  }
 
   .wu-items { border-top: 1px solid var(--line); }
   .wu-row {
@@ -144,26 +185,53 @@ const counts = {
 </style>
 
 <script>
-  document.querySelectorAll<HTMLButtonElement>('.chip').forEach((c) => {
-    c.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach((x) => x.classList.remove('active'));
-      c.classList.add('active');
-      const filter = c.getAttribute('data-filter');
-      document.querySelectorAll<HTMLElement>('.wu-row').forEach((row) => {
-        const diff = row.getAttribute('data-difficulty');
-        const feat = row.getAttribute('data-featured') === 'true';
-        let show = false;
-        if (filter === 'all')           show = true;
-        else if (filter === 'featured') show = feat;
-        else                            show = diff === filter;
-        row.style.display = show ? '' : 'none';
-      });
-      let n = 1;
-      document.querySelectorAll<HTMLElement>('.wu-row').forEach((row) => {
-        if (row.style.display === 'none') return;
+  const chips  = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+  const rows   = Array.from(document.querySelectorAll<HTMLElement>('.wu-row'));
+  const search = document.getElementById('wuSearch') as HTMLInputElement | null;
+  const empty  = document.getElementById('wuEmpty');
+  const reset  = document.getElementById('wuReset');
+
+  let activeFilter = 'all';
+
+  const apply = () => {
+    const q = (search?.value ?? '').trim().toLowerCase();
+    let n = 1;
+    let shown = 0;
+    rows.forEach((row) => {
+      const diff = row.getAttribute('data-difficulty');
+      const feat = row.getAttribute('data-featured') === 'true';
+      const hay  = row.getAttribute('data-search') ?? '';
+      const matchFilter =
+        activeFilter === 'all' ? true :
+        activeFilter === 'featured' ? feat :
+        diff === activeFilter;
+      const matchSearch = q === '' || hay.includes(q);
+      const show = matchFilter && matchSearch;
+      row.style.display = show ? '' : 'none';
+      if (show) {
+        shown++;
         const num = row.querySelector('.wu-num');
         if (num) num.textContent = String(n++).padStart(2, '0');
-      });
+      }
     });
+    if (empty) empty.hidden = shown !== 0;
+  };
+
+  chips.forEach((c) => {
+    c.addEventListener('click', () => {
+      chips.forEach((x) => x.classList.remove('active'));
+      c.classList.add('active');
+      activeFilter = c.getAttribute('data-filter') ?? 'all';
+      apply();
+    });
+  });
+
+  search?.addEventListener('input', apply);
+
+  reset?.addEventListener('click', () => {
+    if (search) search.value = '';
+    activeFilter = 'all';
+    chips.forEach((x) => x.classList.toggle('active', x.getAttribute('data-filter') === 'all'));
+    apply();
   });
 </script>

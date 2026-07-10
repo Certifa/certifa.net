@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
+import { tagSlug } from '../utils/tags';
 
 interface Props {
   entry: CollectionEntry<'writeups'>;
@@ -42,7 +43,7 @@ const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
         <h1 class="wu-title">{title}</h1>
         <p class="wu-desc">{description}</p>
         <div class="wu-tags">
-          {tags.map((t) => <span class="tag">{t}</span>)}
+          {tags.map((t) => <a class="tag" href={`/tags/${tagSlug(t)}/`}>{t}</a>)}
         </div>
       </header>
 
